@@ -22,7 +22,10 @@ class IndexView(ListView):
 
 
 class RecipeDetailView(DetailView):
+    context_object_name = 'recipe'
     model = Recipe
+    template_name = 'recipes/singlePage.html'
+
 
 
 class ProfileView(DetailView):

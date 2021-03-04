@@ -19,9 +19,18 @@
                     </div>
                 </div>
                 <ul class="single-card__items">
-                    <li class="single-card__item"><span class="badge badge_style_green">Обед</span></li>
-                    <li class="single-card__item"><span class="badge badge_style_orange">Завтрак</span></li>
-                    <li class="single-card__item"><span class="badge badge_style_purple">Ужин</span></li>
+                    {% for tag in recipe.tags.all %}
+                        <li class="single-card__item">
+                            <span class="badge 
+                                {% if tag.name == 'zv' %} badge_style_orange
+                                {% elif tag.name == 'ob' %} badge_style_green
+                                {% else %} badge_style_purple
+                                    {% endif %}
+                            ">
+                                {{ tag.get_name_display }}
+                            </span>
+                        </li>
+                    {% endfor %}
                 </ul>
                 <div class="single-card__items single-card__items_column">
                     <p class="single-card__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
@@ -47,9 +56,7 @@
                 </div>
                 <div class="single-card__section">
                     <h3 class="single-card__section-title">Описание:</h3>
-                    <p class=" single-card__section-text">Смешать молоко с сахаром, добавить яйца, тщательно все взбить.
-                        Обмакнуть тосты в смесь и жарить на сливочном масле до золотистой корочки.</p>
-                    <p class=" single-card__section-text">Полить сверху сиропом топинамбура и украсить ягодами.</p>
+                    <p class=" single-card__section-text">{{ recipe.description }}</p>
                 </div>
             </div>
         </div>
