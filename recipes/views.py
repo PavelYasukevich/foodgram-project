@@ -1,10 +1,13 @@
 from django.views.generic import TemplateView, ListView, DetailView
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Amount, Ingredient, Purchase, Recipe, Subscription, Tag
 
+
+User = get_user_model()
 
 class IndexView(ListView):
     model = Recipe
@@ -20,3 +23,9 @@ class IndexView(ListView):
 
 class RecipeDetailView(DetailView):
     model = Recipe
+
+
+class ProfileView(DetailView):
+    model = User
+    template_name = 'recipes/authorRecipe.html'
+        
