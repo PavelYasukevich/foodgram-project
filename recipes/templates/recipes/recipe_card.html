@@ -6,11 +6,17 @@
     <div class="card__body">
         <a class="card__title link" href="{% url 'recipe' recipe.slug %}" target="_blank">{{ recipe.name }}</a>
         <ul class="card__items">
-            {% for tag in recipe.tags %}
-            <li class="card__item"><span class="badge badge_style_orange">{{ tag.name | addclass:'' }}</span></li>
-            <!-- <li class="card__item"><span class="badge badge_style_orange">Завтрак</span></li>
-            <li class="card__item"><span class="badge badge_style_green">Обед</span></li>
-            <li class="card__item"><span class="badge badge_style_purple">Ужин</span></li> -->
+            {% for tag in recipe.tags.all %}
+                <li class="card__item">
+                    <span class="badge 
+                        {% if tag.name == 'zv' %} badge_style_orange
+                        {% elif tag.name == 'ob' %} badge_style_green
+                        {% else %} badge_style_purple
+                            {% endif %}
+                    ">
+                        {{ tag.get_name_display }}
+                    </span>
+                </li>
             {% endfor %}
         </ul>
         <div class="card__items card__items_column">

@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
@@ -11,9 +11,12 @@ class IndexView(ListView):
     # ordering 
     # paginator_class
 
-
     def get_template_names(self):
         if self.request.user.is_authenticated:
             return 'recipes/indexAuth.html'
         else:
             return 'recipes/indexNotAuth.html'
+
+
+class RecipeDetailView(DetailView):
+    model = Recipe
