@@ -34,8 +34,10 @@ class ProfileView(DetailView):
         
 
 class SubscriptionsView(ListView):
+    context_object_name = 'authors'
     template_name = 'recipes/myFollow.html'
     
     def get_queryset(self):
         user = get_object_or_404(User, id=self.request.user.id)
-        return user.subscriptions
+        queryset = User.objects.filter(subscribers__user__id=user.id)
+        return queryset
