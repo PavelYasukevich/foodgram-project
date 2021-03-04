@@ -51,6 +51,8 @@ class Recipe(models.Model):
     fav_counter = models.PositiveSmallIntegerField(
         verbose_name='Добавлений в избранное',
         help_text='Счетчик добавлений в избранное',
+        blank=True,
+        null=True,
     )
     slug = models.SlugField(
         unique=True,
@@ -111,8 +113,8 @@ class Amount(models.Model):
         ]
 
     def __str__(self):
-        rec = Recipe.objects.get(id=self.recipe)
-        ingr = Ingredient.objects.get(id=self.ingredient)
+        rec = Recipe.objects.get(id=self.recipe.id)
+        ingr = Ingredient.objects.get(id=self.ingredient.id)
         unit = ingr.measurement_unit
         return f'{self.value} {unit} {ingr} для {rec.name}'
 

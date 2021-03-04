@@ -5,13 +5,17 @@ from .models import Amount, Ingredient, Purchase, Recipe, Subscription, Tag
 
 @admin.register(Amount)
 class AmountAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('recipe', 'ingredient', 'value')
+    list_filter = ('recipe',)
+    ordering = ('recipe',)
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit',)
     list_filter = ('name',)
+    ordering = ('name',)
+    search_fields = ('name',)
 
 
 @admin.register(Purchase)
@@ -21,9 +25,12 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author',)
+    list_display = ('id', 'name', 'author',)
+    list_display_links = ('name',)
     list_filter = ('author', 'name', 'tags',)
+    ordering = ('name',)
     prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ('fav_counter',)
 
 
 @admin.register(Subscription)
