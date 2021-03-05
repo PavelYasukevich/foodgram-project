@@ -11,13 +11,6 @@ urlpatterns = [
         name="login",
     ),
     path(
-        "logout/",
-        auth_views.LogoutView.as_view(
-            template_name="recipes/indexNotAuth.html"
-        ),
-        name="logot",
-    ),
-    path(
         "password_change/",
         auth_views.PasswordChangeView.as_view(
             template_name="users/changePassword.html"

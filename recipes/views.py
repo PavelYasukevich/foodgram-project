@@ -11,14 +11,9 @@ User = get_user_model()
 
 class IndexView(ListView):
     model = Recipe
+    template_name = 'recipes/indexAuth.html'
     # ordering 
     # paginator_class
-
-    def get_template_names(self):
-        if self.request.user.is_authenticated:
-            return 'recipes/indexAuth.html'
-        else:
-            return 'recipes/indexNotAuth.html'
 
 
 class RecipeDetailView(DetailView):
