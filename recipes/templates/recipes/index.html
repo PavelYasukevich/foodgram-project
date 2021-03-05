@@ -14,7 +14,7 @@
             {% include 'includes/tag_filters.html' %}
         </div>
         <div class="card-list">
-            {% for recipe in object_list %}
+            {% for recipe in recipes %}
                 {% include "includes/recipe_card.html" with recipe=recipe %}
             {% endfor %}
         </div>
