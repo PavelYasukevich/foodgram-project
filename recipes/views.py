@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import mixins, viewsets
+from rest_framework.response import Response
 
 
 from .models import Amount, Ingredient, Purchase, Recipe, Subscription, Tag
@@ -52,18 +53,21 @@ class CreateDestroyViewset(viewsets.GenericViewSet,
 
 
 class SubscriptionsViewSet(CreateDestroyViewset):
-    lookup_field = 'id'
     serializer_class = SubscriptionsSerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        obj = get_object_or_404(queryset, author__id=self.kwargs[self.lookup_field])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def get_queryset(self):
         return self.request.user.subscriptions.all()
 
     def create(self, request, *args, **kwargs):
-        author = get_object_or_404(User, pk=self.kwargs.get('id'))
         user= self.request.user
-        serializer = self.get_serializer(data={'user': user.id, 'author': author.id})
+        serializer = self.get_serializer(data={'user': user.id, 'author': self.request.data['id']})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
