@@ -11,7 +11,7 @@ User = get_user_model()
 
 class IndexView(ListView):
     model = Recipe
-    template_name = 'recipes/indexAuth.html'
+    template_name = 'recipes/index.html'
     # ordering 
     # paginator_class
 
