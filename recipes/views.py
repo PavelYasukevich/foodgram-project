@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -71,3 +71,19 @@ class SubscriptionsViewSet(CreateDestroyViewset):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class NewRecipeView(CreateView):
+    fields = '__all__'
+    model = Recipe
+    template_name = 'recipes/newRecipe.html'
+
+
+class FavoritesView(ListView):
+    model = Recipe
+    template_name = 'recipes/favorite.html'
+
+
+class PurchasesView(ListView):
+    model = Purchase
+    template_name = 'recipes/purchaseList.html'
