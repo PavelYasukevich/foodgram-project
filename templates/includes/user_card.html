@@ -1,11 +1,11 @@
 {% load static %}
-<div class="card-user" data-author="{{ user.id }}">
+<div class="card-user" data-author="{{ author.id }}">
     <div class="card-user__header">
-        <h2 class="card-user__title">{{ user.username }}</h2>
+        <h2 class="card-user__title">{{ author.username }}</h2>
     </div>
     <div class="card-user__body">
         <ul class="card-user__items">
-            {% for recipe in user.recipes.all|slice:"3" %}
+            {% for recipe in author.recipes.all|slice:"3" %}
                 <li class="card-user__item">
                     <div class="recipe">
                         <img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image">
@@ -15,9 +15,9 @@
                 </li>
             {% endfor %}
             <li class="card-user__item">
-                <a href="{% url 'profile' user.id %}" class="card-user__link link">
-                    {% if user.recipes.count|add:"-3" > 0 %}
-                        Еще {{ user.recipes.count|add:"-3" }} рецептов...
+                <a href="{% url 'profile' author.id %}" class="card-user__link link">
+                    {% if author.recipes.count|add:"-3" > 0 %}
+                        Еще {{ author.recipes.count|add:"-3" }} рецептов...
                     {% else %}
                         На страничку автора...
                     {% endif %}

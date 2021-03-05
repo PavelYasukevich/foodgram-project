@@ -28,6 +28,7 @@ class RecipeDetailView(DetailView):
 
 
 class ProfileView(DetailView):
+    context_object_name = 'author'
     model = User
     template_name = 'recipes/authorRecipe.html'
         
@@ -38,7 +39,7 @@ class SubscriptionsView(ListView):
     
     def get_queryset(self):
         user = get_object_or_404(User, id=self.request.user.id)
-        queryset = User.objects.all() # filter(subscribers__user__id=user.id)
+        queryset = User.objects.filter(subscribers__user__id=user.id)
         return queryset
 
 
@@ -51,6 +52,7 @@ class CreateDestroyViewset(viewsets.GenericViewSet,
 
 
 class SubscriptionsViewSet(CreateDestroyViewset):
+    lookup_field = 'id'
     serializer_class = SubscriptionsSerializer
 
     def get_queryset(self):

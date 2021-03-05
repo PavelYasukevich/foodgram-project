@@ -8,12 +8,13 @@
 
 {% block content %}
 <main class="main container">
+    {% csrf_token %}
     <div class="main__header">
         <h1 class="main__title">Мои подписки</h1>
     </div>
     <div class="card-list">
         {% for author in authors %}
-            {% include 'includes/user_card.html' with user=author %}
+            {% include 'includes/user_card.html' with author=author %}
         {% endfor %}
     </div>
     {% include 'includes/paginator.html' %}

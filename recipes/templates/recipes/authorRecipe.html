@@ -8,19 +8,20 @@
 
 {% block content %}
     <main class="main container">
+        {% csrf_token %}
         <div class="main__header">
-            <h1 class="main__title">{{ object.username }}</h1>
+            <h1 class="main__title">{{ author.username }}</h1>
             {% include 'includes/tag_filters.html' %}
         </div>
 
         {% if request.user.is_authenticated %}
-        <div class="author-subscribe" data-author="323">
+        <div class="author-subscribe" data-author="{{ author.id }}">
             <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
         </div>
         {% endif %}
 
         <div class="card-list">
-            {% for recipe in object.recipes.all %}
+            {% for recipe in author.recipes.all %}
                 {% include "includes/recipe_card.html" with recipe=recipe %}
             {% endfor %}
         </div>
