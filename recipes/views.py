@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
 
-from .forms import AmountFormSet, RecipeForm
+from .forms import RecipeForm
 from .models import Amount, Ingredient, Purchase, Recipe, Subscription, Tag
 from .serializers import IngredientSerializer, SubscriptionsSerializer
 
@@ -25,7 +25,6 @@ class RecipeDetailView(DetailView):
     context_object_name = 'recipe'
     model = Recipe
     template_name = 'recipes/singlePage.html'
-
 
 
 class ProfileView(DetailView):
@@ -73,31 +72,14 @@ class SubscriptionsViewSet(CreateDestroyViewset):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-# class NewRecipeView(CreateView):
-#     # fields = '__all__'
-#     form_class = RecipeForm
-#     model = Recipe
-#     template_name = 'recipes/newRecipe.html'
-
-
 def create_new_recipe(request):
-    recipe_form = RecipeForm(request.POST or None)
-    amount_formset = AmountFormSet(
-        request.POST or {
-            'amount-TOTAL_FORMS': '1',
-            'amount-INITIAL_FORMS': '1',
-        },
-        prefix="amount"
-    )
-    if recipe_form.is_valid() and amount_formset.is_valid():
+    recipe_form = RecipeForm(request.POST or None, request.FILES)
+    if recipe_form.is_valid():
         return redirect('index')
-    else:
-        for error in recipe_form.errors:
-            print(error)
     return render(
         request,
         'recipes/newRecipe.html',
-        {'recipe_form': recipe_form, 'amount_formset': amount_formset}
+        {'recipe_form': recipe_form}
     )
 
 
