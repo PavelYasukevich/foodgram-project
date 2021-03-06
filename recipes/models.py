@@ -3,7 +3,7 @@ from django.db import models
 
 
 User = get_user_model()
-
+TAG_CHOICES = [('zv', 'Завтрак'), ('ob', 'Обед'), ('uz', 'Ужин')]
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -153,7 +153,7 @@ class Tag(models.Model):
         unique=True,
         verbose_name='Тег',
         help_text='Тег',
-        choices=[('zv', 'Завтрак'), ('ob', 'Обед'), ('uz', 'Ужин')]
+        choices=TAG_CHOICES,
     )
 
     def __str__(self):

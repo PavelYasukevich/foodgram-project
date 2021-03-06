@@ -133,6 +133,7 @@ class Api {
         return fetch(`/api/ingredients?query=${text}`, {
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
             }
         })
             .then( e => {

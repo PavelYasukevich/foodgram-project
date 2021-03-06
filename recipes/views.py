@@ -6,9 +6,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
 
-
+from .forms import AmountFormSet, RecipeForm
 from .models import Amount, Ingredient, Purchase, Recipe, Subscription, Tag
-from .serializers import SubscriptionsSerializer
+from .serializers import IngredientSerializer, SubscriptionsSerializer
 
 
 User = get_user_model()
@@ -73,10 +73,32 @@ class SubscriptionsViewSet(CreateDestroyViewset):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class NewRecipeView(CreateView):
-    fields = '__all__'
-    model = Recipe
-    template_name = 'recipes/newRecipe.html'
+# class NewRecipeView(CreateView):
+#     # fields = '__all__'
+#     form_class = RecipeForm
+#     model = Recipe
+#     template_name = 'recipes/newRecipe.html'
+
+
+def create_new_recipe(request):
+    recipe_form = RecipeForm(request.POST or None)
+    amount_formset = AmountFormSet(
+        request.POST or {
+            'amount-TOTAL_FORMS': '1',
+            'amount-INITIAL_FORMS': '1',
+        },
+        prefix="amount"
+    )
+    if recipe_form.is_valid() and amount_formset.is_valid():
+        return redirect('index')
+    else:
+        for error in recipe_form.errors:
+            print(error)
+    return render(
+        request,
+        'recipes/newRecipe.html',
+        {'recipe_form': recipe_form, 'amount_formset': amount_formset}
+    )
 
 
 class FavoritesView(ListView):
@@ -87,3 +109,16 @@ class FavoritesView(ListView):
 class PurchasesView(ListView):
     model = Purchase
     template_name = 'recipes/purchaseList.html'
+
+
+class IngredientsViewSet(viewsets.GenericViewSet,
+                            mixins.ListModelMixin):
+    
+    serializer_class = IngredientSerializer
+
+    def get_queryset(self):
+        queryset = Ingredient.objects.all()
+        query = self.request.query_params.get('query', None)
+        if query is not None:
+            queryset = queryset.filter(name__startswith=query)
+        return queryset
