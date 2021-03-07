@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView, ListView, DetailView, CreateView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -123,3 +123,9 @@ class IngredientsViewSet(viewsets.GenericViewSet,
         if query is not None:
             queryset = queryset.filter(name__startswith=query)
         return queryset
+
+
+class UpdateRecipeView(UpdateView):
+    form_class = RecipeForm
+    template_name = 'recipes/editRecipe.html'
+    queryset = Recipe.objects.all()
