@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
 
+from pytils.translit import slugify
+
 from .forms import RecipeForm
 from .models import Amount, Ingredient, Purchase, Recipe, Subscription, Tag
 from .serializers import IngredientSerializer, SubscriptionsSerializer
@@ -73,9 +75,26 @@ class SubscriptionsViewSet(CreateDestroyViewset):
 
 
 def create_new_recipe(request):
-    recipe_form = RecipeForm(request.POST or None, request.FILES)
+    recipe_form = RecipeForm(request.POST or None, request.FILES or None)
     if recipe_form.is_valid():
+        new_recipe = recipe_form.save(commit=False)
+        new_recipe.author = request.user
+        new_recipe.slug = slugify(new_recipe.name)
+        new_recipe.save()
+
+        for tag in request.POST.getlist('tag'):
+            tag_to_add = get_object_or_404(Tag, name=tag)
+            new_recipe.tags.add(tag_to_add)
+
+        for name, value in request.POST.items():
+            if name.startswith('nameIngredient_'):
+                num = int(name.split('_')[1])
+                ingr_to_add = get_object_or_404(Ingredient, name=value)
+                amount_value = int(request.POST.get(f'valueIngredient_{num}'))
+                Amount.objects.create(value=amount_value, recipe=new_recipe, ingredient=ingr_to_add)
+                new_recipe.ingredients.add(ingr_to_add)
         return redirect('index')
+
     return render(
         request,
         'recipes/newRecipe.html',

@@ -40,4 +40,5 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name',)
+    readonly_fields = ('name',)
