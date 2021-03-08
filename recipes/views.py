@@ -82,8 +82,8 @@ def create_new_recipe(request):
         new_recipe.slug = slugify(new_recipe.name)
         new_recipe.save()
 
-        for tag in request.POST.getlist('tag'):
-            tag_to_add = get_object_or_404(Tag, name=tag)
+        for tag_id in request.POST.getlist('tags'):
+            tag_to_add = get_object_or_404(Tag, id=tag_id)
             new_recipe.tags.add(tag_to_add)
 
         for name, value in request.POST.items():

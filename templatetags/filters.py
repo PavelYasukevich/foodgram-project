@@ -1,5 +1,7 @@
 from django import template
 
+from recipes.models import Tag
+
 register = template.Library()
 
 # @register.filter
@@ -25,6 +27,14 @@ def addclass(field, css):
 #     return value.label_tag(attrs={'data-tooltip': txt})
 
 
-# @register.inclusion_tag('tdcp/field_render.html')
-# def render(field):
-#     return {'field': field}
+@register.inclusion_tag('recipes/render_tags.html')
+def render_recipe_form_tags(items):
+    for item in items:
+        _id = item.data['value'].value
+        if _id == 1:
+            item.data['attrs']['class'] = 'tags__checkbox tags__checkbox_style_orange'
+        if _id == 2:
+            item.data['attrs']['class'] = 'tags__checkbox tags__checkbox_style_green'
+        if _id == 3:
+            item.data['attrs']['class'] = 'tags__checkbox tags__checkbox_style_purple'
+    return {'items': items}
