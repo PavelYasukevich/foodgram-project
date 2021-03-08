@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Удаление рецепта</title>
+    <link rel="stylesheet" href="{% static 'pages/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main container">
+    <div class="custom-center-block">
+        <form method="post" action="{% url 'delete_recipe' recipe.slug %}">
+            {% csrf_token %}
+            <p>Уверены, что хотите удалить "{{ object.name }}"?</p>
+            <button type="submit" class="button button_style_blue">Уверен!</button>
+        </form>
+
+        <div class="custom-button-block">
+            <a href="{% url 'index' %}" class="button button_style_blue">Перейти на главную</a>
+        </div>
+    </div>
+
+
+</main>
+{% endblock %}

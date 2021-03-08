@@ -8,6 +8,7 @@ class RecipeForm(forms.ModelForm):
         queryset=Tag.objects.all(),
         widget=forms.CheckboxSelectMultiple(),
     )
+    
     class Meta:
         model = Recipe
         fields = ["name", "cooking_time", "description", "image"]

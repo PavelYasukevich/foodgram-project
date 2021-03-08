@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.urls import reverse
 
 
 User = get_user_model()
@@ -51,8 +52,7 @@ class Recipe(models.Model):
     fav_counter = models.PositiveSmallIntegerField(
         verbose_name='Добавлений в избранное',
         help_text='Счетчик добавлений в избранное',
-        blank=True,
-        null=True,
+        default=0,
     )
     slug = models.SlugField(
         unique=True,
@@ -64,6 +64,9 @@ class Recipe(models.Model):
 
     def __str__(self):
         return f'{self.name}, автор: {self.author}'
+
+    def get_absolute_url(self):
+        return reverse('recipe', args=[self.slug])
 
 
 class Ingredient(models.Model):
@@ -92,7 +95,7 @@ class Amount(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='+',
+        related_name='amounts',
         verbose_name='Рецепт',
         help_text='Рецепт',
     )

@@ -1,8 +1,9 @@
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView
+from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView, UpdateView
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
 
@@ -126,6 +127,13 @@ class IngredientsViewSet(viewsets.GenericViewSet,
 
 
 class UpdateRecipeView(UpdateView):
+    context_object_name = 'recipe'
     form_class = RecipeForm
     template_name = 'recipes/editRecipe.html'
     queryset = Recipe.objects.all()
+
+
+class DeleteRecipeView(DeleteView):
+    model = Recipe
+    template_name = 'recipes/deleteRecipe.html'
+    success_url = reverse_lazy('index')
