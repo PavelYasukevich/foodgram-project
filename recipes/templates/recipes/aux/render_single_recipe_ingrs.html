@@ -1,3 +1,3 @@
 {% for idx, ingr, amount in current_ingrs %}
-    <p class=" single-card__section-item">{{ ingr.name }} - {{ amount }} {{ ingr.measurement_unit }}</p>
+    <p class=" single-card__section-item">{{ ingr.name|capfirst }} - {{ amount }} {{ ingr.measurement_unit }}</p>
 {% endfor %}
