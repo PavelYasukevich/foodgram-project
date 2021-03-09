@@ -3,22 +3,22 @@
 {% load custom_filters %}
 
 {% block head %}
-    <title>Редактирование рецепта</title>
+    <title>{% if recipe %}Редактирование{% else %}Создание{% endif %} рецепта</title>
     <link rel="stylesheet" href="{% static 'pages/form.css' %}">
 {% endblock %}
 
 {% block content %}
 <main class="main container">
     <div class="main__header">
-        <h1 class="main__title">Редактирование рецепта</h1>
+        <h1 class="main__title">{% if recipe %}Редактирование{% else %}Создание{% endif %} рецепта</h1>
     </div>
     <div class="form-container">
-        <form class="form" method="post" enctype="multipart/form-data" action="{% url 'edit_recipe' recipe.slug %}">
+        <form class="form" method="post" enctype="multipart/form-data" action="{% if recipe %}{% url 'edit_recipe' recipe.slug %}{% else %}{% url 'new_recipe' %}{% endif %}">
             {% csrf_token %}
             <div class="form__group">
                 <label for="id_name" class="form__label">Название рецепта</label>
                 <div class="form__field-group">
-                    {{ form.name|addclass:"form__input"}}
+                    {{ form.name|addclass:"form__input" }}
                     <span class="form__error">{{ form.name.errors }}</span>
                 </div>
             </div>
@@ -26,13 +26,19 @@
                 <p class="form__label">Теги</p>
                 <div class="form__field-group">
                     <div class="tags">
-                        {% render_tags form.tags recipe=recipe %}
+                        {% if recipe %}
+                            {% render_tags form.tags recipe=recipe %}
+                        {% else %}
+                            {% render_tags form.tags %}
+                        {% endif %}
                     </div>
+                    <span class="form__error">{{ form.tags.errors }}</span>
                 </div>
             </div>
             <div class="form__group">
                 <label for="nameIngredient" class="form__label">Ингредиенты</label>
                 <div class="form__field-group">
+
                     <div class="form__field-group-ingredientes">
                         <div class="form__dropdown">
                             <input type="text" id="nameIngredient" class="form__input">
@@ -43,11 +49,15 @@
                     </div>
 
                     <div class="form__field-group-ingredientes-container">
-                        {% edit_recipe_ingrs recipe %}
+                        {% if recipe %}
+                            {% edit_recipe_ingrs recipe %}
+                        {% endif %}
                     </div>
 
                     <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
+                    <span class="form__error"></span>
                 </div>
+
             </div>
             <div class="form__group">
                 <label for="id_time" class="form__label">Время приготовления</label>
@@ -61,7 +71,7 @@
                 <label for="id_description" class="form__label">Описание</label>
                 <div class="form__field-group">
                     {{ form.description|addclass:"form__textarea" }}
-                    <span class="form__error">{{ recipe.description.errors }}</span>
+                    <span class="form__error">{{ form.description.errors }}</span>
                 </div>
             </div>
             <div class="form__group">
@@ -72,11 +82,12 @@
                 </div>
             </div>
             <div class="form__footer">
-                <button class="button button_style_blue">Сохранить</button>
-                <a style="margin-left: 2.5em" href="{% url 'delete_recipe' recipe.slug %}" class="form__ingredient-link">Удалить</a>
+                <button class="button button_style_blue">Создать рецепт</button>
             </div>
         </form>
     </div>
+
+
 </main>
 {% endblock %}
 

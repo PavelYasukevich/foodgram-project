@@ -1,5 +1,5 @@
 {% for idx, ingr, amount in current_ingrs %}
-    <div class="form__field-item-ingredient" id="{{ ingr.id_for_label}}">
+    <div class="form__field-item-ingredient" id="{{ ingr.name.id_for_label}}">
         <span> {{ ingr.name|capfirst}} {{ amount }}{{ ingr.measurement_unit }}</span>
         <span class="form__field-item-delete"></span>
         <input id="nameIngredient_{{ idx }}" name="nameIngredient_{{ idx }}" type="hidden" value="{{ ingr.name}}">

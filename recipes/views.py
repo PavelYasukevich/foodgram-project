@@ -76,9 +76,9 @@ class SubscriptionsViewSet(CreateDestroyViewset):
 
 
 def create_new_recipe(request):
-    recipe_form = RecipeForm(request.POST or None, request.FILES or None)
-    if recipe_form.is_valid():
-        new_recipe = recipe_form.save(commit=False)
+    form = RecipeForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        new_recipe = form.save(commit=False)
         new_recipe.author = request.user
         new_recipe.slug = slugify(new_recipe.name)
         new_recipe.save()
@@ -98,9 +98,42 @@ def create_new_recipe(request):
 
     return render(
         request,
-        'recipes/newRecipe.html',
-        {'recipe_form': recipe_form}
+        'recipes/formRecipe.html',
+        {'form': form}
     )
+
+
+class UpdateRecipeView(UpdateView):
+    context_object_name = 'recipe'
+    form_class = RecipeForm
+    template_name = 'recipes/editRecipe.html'
+    queryset = Recipe.objects.all()
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.slug = slugify(self.object.name)
+
+        new_tags = []
+        for tag_id in self.request.POST.getlist('tags'):
+            tag_to_add = get_object_or_404(Tag, id=tag_id)
+            new_tags.append(tag_to_add)
+        self.object.tags.set(new_tags)
+
+        new_ingrs = []
+        for name, value in self.request.POST.items():
+            if name.startswith('nameIngredient_'):
+                num = int(name.split('_')[1])
+                ingr_to_add = get_object_or_404(Ingredient, name=value)
+                amount_value = int(self.request.POST.get(f'valueIngredient_{num}'))
+                new_ingrs.append((ingr_to_add, amount_value))
+
+        Amount.objects.filter(recipe=self.object).delete()
+        for ingr, amount_value in new_ingrs:
+            Amount.objects.create(value=amount_value, recipe=self.object, ingredient=ingr)
+            self.object.ingredients.add(ingr)
+
+        self.object.save()
+        return redirect(self.get_success_url())
 
 
 class FavoritesView(ListView):
@@ -124,40 +157,6 @@ class IngredientsViewSet(viewsets.GenericViewSet,
         if query is not None:
             queryset = queryset.filter(name__startswith=query)
         return queryset
-
-
-class UpdateRecipeView(UpdateView):
-    context_object_name = 'recipe'
-    form_class = RecipeForm
-    template_name = 'recipes/editRecipe.html'
-    queryset = Recipe.objects.all()
-
-    def form_valid(self, form):
-        request = self.request
-        self.object = form.save(commit=False)
-        self.object.slug = slugify(self.object.name)
-
-        new_tags = []
-        for tag_id in request.POST.getlist('tags'):
-            tag_to_add = get_object_or_404(Tag, id=tag_id)
-            new_tags.append(tag_to_add)
-        self.object.tags.set(new_tags)
-
-        new_ingrs = []
-        for name, value in request.POST.items():
-            if name.startswith('nameIngredient_'):
-                num = int(name.split('_')[1])
-                ingr_to_add = get_object_or_404(Ingredient, name=value)
-                amount_value = int(request.POST.get(f'valueIngredient_{num}'))
-                new_ingrs.append((ingr_to_add, amount_value))
-
-        Amount.objects.filter(recipe=self.object).delete()
-        for ingr, amount_value in new_ingrs:
-            Amount.objects.create(value=amount_value, recipe=self.object, ingredient=ingr)
-            self.object.ingredients.add(ingr_to_add)
-
-        return redirect(self.get_success_url())
-
 
 
 class DeleteRecipeView(DeleteView):
