@@ -50,14 +50,20 @@
                     </ul>
                 </div>
 
-                {% if request.user.is_authenticated %}
                     <ul class="single-card__items">
                         <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button></li>
-                        {% if request.user != recipe.author %}
-                            <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>
+                        {% if request.user.is_authenticated %}
+                            {% if recipe.author|in_subscriptions:request.user %}
+                                <div class="author-subscribe" data-author="{{ author.id }}">
+                                    <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться</button></li>
+                                </div>
+                            {% else%}
+                                <div class="author-subscribe" data-author="{{ author.id }}">
+                                    <li class="single-card__item"><button class="button button_style_blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>
+                                </div>
+                            {% endif %}
                         {% endif %}
                     </ul>
-                {% endif %}
 
                 <div class="single-card__section">
                     <h3 class="single-card__section-title">Ингридиенты:</h3>
