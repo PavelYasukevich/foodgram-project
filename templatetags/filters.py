@@ -1,13 +1,20 @@
 from django import template
+from django.contrib.auth import get_user_model
 
-from recipes.models import Tag, Recipe
+from recipes.models import Tag, Recipe, Subscription
 
 
+User = get_user_model()
 register = template.Library()
 
 @register.filter
 def addclass(field, css):
     return field.as_widget(attrs={"class": css})
+
+
+@register.filter
+def in_subscriptions(author, user):
+    return Subscription.objects.filter(author=author, user=user).exists()
 
 
 @register.inclusion_tag('recipes/aux/render_tags.html')
