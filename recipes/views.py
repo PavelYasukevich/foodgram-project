@@ -132,6 +132,33 @@ class UpdateRecipeView(UpdateView):
     template_name = 'recipes/editRecipe.html'
     queryset = Recipe.objects.all()
 
+    def form_valid(self, form):
+        request = self.request
+        self.object = form.save(commit=False)
+        self.object.slug = slugify(self.object.name)
+
+        new_tags = []
+        for tag_id in request.POST.getlist('tags'):
+            tag_to_add = get_object_or_404(Tag, id=tag_id)
+            new_tags.append(tag_to_add)
+        self.object.tags.set(new_tags)
+
+        new_ingrs = []
+        for name, value in request.POST.items():
+            if name.startswith('nameIngredient_'):
+                num = int(name.split('_')[1])
+                ingr_to_add = get_object_or_404(Ingredient, name=value)
+                amount_value = int(request.POST.get(f'valueIngredient_{num}'))
+                new_ingrs.append((ingr_to_add, amount_value))
+
+        Amount.objects.filter(recipe=self.object).delete()
+        for ingr, amount_value in new_ingrs:
+            Amount.objects.create(value=amount_value, recipe=self.object, ingredient=ingr)
+            self.object.ingredients.add(ingr_to_add)
+
+        return redirect(self.get_success_url())
+
+
 
 class DeleteRecipeView(DeleteView):
     model = Recipe
