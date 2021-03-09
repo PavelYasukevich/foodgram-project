@@ -106,7 +106,7 @@ def create_new_recipe(request):
 class UpdateRecipeView(UpdateView):
     context_object_name = 'recipe'
     form_class = RecipeForm
-    template_name = 'recipes/editRecipe.html'
+    template_name = 'recipes/formRecipe.html'
     queryset = Recipe.objects.all()
 
     def form_valid(self, form):
