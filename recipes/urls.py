@@ -7,7 +7,7 @@ from . import views
 router = routers.SimpleRouter()
 # router.register(r'purchases', PurchasesViewSet)
 router.register('subscriptions', views.SubscriptionsViewSet, basename='subscriptions')
-# router.register(r'favorites', FavoritesViewSet)
+router.register('favorites', views.FavoritesViewSet, basename='favorites')
 router.register('ingredients', views.IngredientsViewSet, basename='ingredients')
 
 

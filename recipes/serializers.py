@@ -1,13 +1,24 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
-from .models import Ingredient, Purchase, Subscription
+from .models import Favorite, Ingredient, Purchase, Subscription
+
+
+User = get_user_model()
 
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = "__all__"
+        fields = '__all__'
         model = Subscription
+
+
+class FavoritesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = '__all__'
+        model = Favorite
 
 
 class IngredientSerializer(serializers.ModelSerializer):

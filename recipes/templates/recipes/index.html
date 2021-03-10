@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="{% static 'pages/index.css' %}">
 {% endblock %}
 
-
 {% block content %}
     <main class="main container">
         <div class="main__header">
@@ -15,7 +14,7 @@
         </div>
         <div class="card-list">
             {% for recipe in recipes %}
-                {% include "includes/recipe_card.html" with recipe=recipe %}
+                {% include 'includes/recipe_card.html' with recipe=recipe %}
             {% endfor %}
         </div>
         {% include 'includes/paginator.html' %}

@@ -1,7 +1,7 @@
 from django import template
 from django.contrib.auth import get_user_model
 
-from recipes.models import Tag, Recipe, Subscription
+from recipes.models import Favorite, Tag, Recipe, Subscription
 
 
 User = get_user_model()
@@ -15,6 +15,11 @@ def addclass(field, css):
 @register.filter
 def in_subscriptions(author, user):
     return Subscription.objects.filter(author=author, user=user).exists()
+
+
+@register.filter
+def in_favorites(recipe, user):
+    return Favorite.objects.filter(recipe=recipe, user=user).exists()
 
 
 @register.inclusion_tag('recipes/aux/render_tags.html')

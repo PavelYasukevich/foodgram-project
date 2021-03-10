@@ -4,14 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
 from pytils.translit import slugify
 
 from .forms import RecipeForm
-from .models import Amount, Ingredient, Purchase, Recipe, Subscription, Tag
-from .serializers import IngredientSerializer, SubscriptionsSerializer
+from .models import Amount, Favorite, Ingredient, Purchase, Recipe, Subscription, Tag
+from .serializers import FavoritesSerializer, IngredientSerializer, SubscriptionsSerializer
 
 
 User = get_user_model()
@@ -137,8 +137,15 @@ class UpdateRecipeView(UpdateView):
 
 
 class FavoritesView(ListView):
+    context_object_name = 'favorites'
     model = Recipe
     template_name = 'recipes/favorite.html'
+
+    def get_queryset(self):
+        user = get_object_or_404(User, id=self.request.user.id)
+        user_favs = user.favorites.values_list('recipe__id', flat=True)
+        queryset = Recipe.objects.filter(id__in=user_favs)
+        return queryset
 
 
 class PurchasesView(ListView):
@@ -157,6 +164,28 @@ class IngredientsViewSet(viewsets.GenericViewSet,
         if query is not None:
             queryset = queryset.filter(name__startswith=query)
         return queryset
+
+
+class FavoritesViewSet(CreateDestroyViewset):
+    serializer_class = FavoritesSerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        obj = get_object_or_404(queryset, recipe__id=self.kwargs[self.lookup_field])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def get_queryset(self):
+        return self.request.user.favorites.all()
+
+    def create(self, request, *args, **kwargs):
+        user= self.request.user
+        serializer = self.get_serializer(data={'user': user.id, 'recipe': self.request.data['id']})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 
 class DeleteRecipeView(DeleteView):

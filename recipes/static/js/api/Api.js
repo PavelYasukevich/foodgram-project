@@ -99,10 +99,11 @@ class Api {
       })
   }
   addFavorites (id)  {
-    return fetch(`/api/favorites`, {
+    return fetch(`/api/favorites/`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
       },
       body: JSON.stringify({
         id: id
@@ -119,7 +120,8 @@ class Api {
     return fetch(`/api/favorites/${id}/`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
       }
     })
         .then( e => {
