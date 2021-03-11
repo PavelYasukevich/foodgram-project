@@ -7,6 +7,6 @@ from .forms import CreationForm
 
 class SignUp(SuccessMessageMixin, CreateView):
     form_class = CreationForm
-    success_url = reverse_lazy("login")
-    success_message = "Ученая запись успешно создана"
-    template_name = "users/reg.html"
+    success_url = reverse_lazy('login')
+    success_message = 'Ученая запись успешно создана'
+    template_name = 'users/reg.html'

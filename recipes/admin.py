@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import Amount, Favorite, Ingredient, Purchase, Recipe, Subscription, Tag
+from .models import (
+    Amount,
+    Favorite,
+    Ingredient,
+    Purchase,
+    Recipe,
+    Subscription,
+    Tag,
+)
 
 
 @admin.register(Amount)
@@ -12,7 +20,10 @@ class AmountAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit',)
+    list_display = (
+        'name',
+        'measurement_unit',
+    )
     list_filter = ('name',)
     ordering = ('name',)
     search_fields = ('name',)
@@ -25,9 +36,17 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'author',)
+    list_display = (
+        'id',
+        'name',
+        'author',
+    )
     list_display_links = ('name',)
-    list_filter = ('author', 'name', 'tags',)
+    list_filter = (
+        'author',
+        'name',
+        'tags',
+    )
     ordering = ('name',)
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ('fav_counter',)

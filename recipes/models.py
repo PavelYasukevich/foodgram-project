@@ -2,9 +2,9 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
-
 User = get_user_model()
 TAG_CHOICES = [('zv', 'Завтрак'), ('ob', 'Обед'), ('uz', 'Ужин')]
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -75,7 +75,7 @@ class Ingredient(models.Model):
         max_length=100,
         unique=True,
         verbose_name='Название ингредиента',
-        help_text='Название ингредиента, 100 символов'
+        help_text='Название ингредиента, 100 символов',
     )
     measurement_unit = models.CharField(
         max_length=20,
@@ -110,8 +110,7 @@ class Amount(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'ingredient'],
-                name='unique_ingr'
+                fields=['recipe', 'ingredient'], name='unique_ingr'
             )
         ]
 
@@ -210,8 +209,7 @@ class Favorite(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'user'],
-                name='unique_fav'
+                fields=['recipe', 'user'], name='unique_fav'
             )
         ]
 

@@ -4,25 +4,25 @@ from django.urls import include, path
 from .views import SignUp
 
 urlpatterns = [
-    path("signup/", SignUp.as_view(), name="signup"),
+    path('signup/', SignUp.as_view(), name='signup'),
     path(
-        "login/",
-        auth_views.LoginView.as_view(template_name="users/authForm.html"),
-        name="login",
+        'login/',
+        auth_views.LoginView.as_view(template_name='users/authForm.html'),
+        name='login',
     ),
     path(
-        "password_change/",
+        'password_change/',
         auth_views.PasswordChangeView.as_view(
-            template_name="users/changePassword.html"
+            template_name='users/changePassword.html'
         ),
-        name="password_change",
+        name='password_change',
     ),
     path(
-        "password_reset/",
+        'password_reset/',
         auth_views.PasswordResetView.as_view(
-            template_name="users/resetPassword.html"
+            template_name='users/resetPassword.html'
         ),
-        name="password_reset",
+        name='password_reset',
     ),
-    path("", include("django.contrib.auth.urls")),
+    path('', include('django.contrib.auth.urls')),
 ]

@@ -1,27 +1,29 @@
-from django.views.generic import TemplateView, ListView, DeleteView, DetailView, CreateView, UpdateView
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.views.generic import DeleteView, DetailView, ListView, UpdateView
+from pytils.translit import slugify
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
-from pytils.translit import slugify
-
 from .forms import RecipeForm
-from .models import Amount, Favorite, Ingredient, Purchase, Recipe, Subscription, Tag
-from .serializers import FavoritesSerializer, IngredientSerializer, PurchaseSerializer, SubscriptionsSerializer
-
+from .models import Amount, Ingredient, Purchase, Recipe, Tag
+from .serializers import (
+    FavoritesSerializer,
+    IngredientSerializer,
+    PurchaseSerializer,
+    SubscriptionsSerializer,
+)
 
 User = get_user_model()
+
 
 class IndexView(ListView):
     context_object_name = 'recipes'
     model = Recipe
     template_name = 'recipes/index.html'
-    # ordering 
-    # paginator_class
 
 
 class RecipeDetailView(DetailView):
@@ -34,23 +36,21 @@ class ProfileView(DetailView):
     context_object_name = 'author'
     model = User
     template_name = 'recipes/authorRecipe.html'
-        
+
 
 class SubscriptionsView(ListView):
     context_object_name = 'authors'
     template_name = 'recipes/myFollow.html'
-    
+
     def get_queryset(self):
         user = get_object_or_404(User, id=self.request.user.id)
         queryset = User.objects.filter(subscribers__user__id=user.id)
         return queryset
 
 
-class CreateDestroyViewset(viewsets.GenericViewSet, 
-                            mixins.CreateModelMixin,
-                            mixins.DestroyModelMixin
-                            ):
-    """Proxy class"""
+class CreateDestroyViewset(
+    viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.DestroyModelMixin
+):
     pass
 
 
@@ -59,7 +59,9 @@ class SubscriptionsViewSet(CreateDestroyViewset):
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
-        obj = get_object_or_404(queryset, author__id=self.kwargs[self.lookup_field])
+        obj = get_object_or_404(
+            queryset, author__id=self.kwargs[self.lookup_field]
+        )
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -67,12 +69,16 @@ class SubscriptionsViewSet(CreateDestroyViewset):
         return self.request.user.subscriptions.all()
 
     def create(self, request, *args, **kwargs):
-        user= self.request.user
-        serializer = self.get_serializer(data={'user': user.id, 'author': self.request.data['id']})
+        user = self.request.user
+        serializer = self.get_serializer(
+            data={'user': user.id, 'author': self.request.data['id']}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
 
 def create_new_recipe(request):
@@ -92,15 +98,15 @@ def create_new_recipe(request):
                 num = int(name.split('_')[1])
                 ingr_to_add = get_object_or_404(Ingredient, name=value)
                 amount_value = int(request.POST.get(f'valueIngredient_{num}'))
-                Amount.objects.create(value=amount_value, recipe=new_recipe, ingredient=ingr_to_add)
+                Amount.objects.create(
+                    value=amount_value,
+                    recipe=new_recipe,
+                    ingredient=ingr_to_add,
+                )
                 new_recipe.ingredients.add(ingr_to_add)
         return redirect('index')
 
-    return render(
-        request,
-        'recipes/formRecipe.html',
-        {'form': form}
-    )
+    return render(request, 'recipes/formRecipe.html', {'form': form})
 
 
 class UpdateRecipeView(UpdateView):
@@ -124,12 +130,16 @@ class UpdateRecipeView(UpdateView):
             if name.startswith('nameIngredient_'):
                 num = int(name.split('_')[1])
                 ingr_to_add = get_object_or_404(Ingredient, name=value)
-                amount_value = int(self.request.POST.get(f'valueIngredient_{num}'))
+                amount_value = int(
+                    self.request.POST.get(f'valueIngredient_{num}')
+                )
                 new_ingrs.append((ingr_to_add, amount_value))
 
         Amount.objects.filter(recipe=self.object).delete()
         for ingr, amount_value in new_ingrs:
-            Amount.objects.create(value=amount_value, recipe=self.object, ingredient=ingr)
+            Amount.objects.create(
+                value=amount_value, recipe=self.object, ingredient=ingr
+            )
             self.object.ingredients.add(ingr)
 
         self.object.save()
@@ -160,10 +170,8 @@ class PurchasesView(ListView):
         return queryset
 
 
+class IngredientsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
-class IngredientsViewSet(viewsets.GenericViewSet,
-                            mixins.ListModelMixin):
-    
     serializer_class = IngredientSerializer
 
     def get_queryset(self):
@@ -179,7 +187,9 @@ class FavoritesViewSet(CreateDestroyViewset):
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
-        obj = get_object_or_404(queryset, recipe__id=self.kwargs[self.lookup_field])
+        obj = get_object_or_404(
+            queryset, recipe__id=self.kwargs[self.lookup_field]
+        )
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -187,12 +197,16 @@ class FavoritesViewSet(CreateDestroyViewset):
         return self.request.user.favorites.all()
 
     def create(self, request, *args, **kwargs):
-        user= self.request.user
-        serializer = self.get_serializer(data={'user': user.id, 'recipe': self.request.data['id']})
+        user = self.request.user
+        serializer = self.get_serializer(
+            data={'user': user.id, 'recipe': self.request.data['id']}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
 
 class DeleteRecipeView(DeleteView):
@@ -206,7 +220,9 @@ class PurchasesViewSet(CreateDestroyViewset):
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
-        obj = get_object_or_404(queryset, recipe__id=self.kwargs[self.lookup_field])
+        obj = get_object_or_404(
+            queryset, recipe__id=self.kwargs[self.lookup_field]
+        )
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -214,9 +230,13 @@ class PurchasesViewSet(CreateDestroyViewset):
         return self.request.user.purchases.all()
 
     def create(self, request, *args, **kwargs):
-        user= self.request.user
-        serializer = self.get_serializer(data={'user': user.id, 'recipe': self.request.data['id']})
+        user = self.request.user
+        serializer = self.get_serializer(
+            data={'user': user.id, 'recipe': self.request.data['id']}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
