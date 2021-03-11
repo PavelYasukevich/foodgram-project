@@ -24,6 +24,7 @@ class IndexView(ListView):
     context_object_name = 'recipes'
     extra_context = {'tags': Tag.objects.all()}
     model = Recipe
+    paginate_by = 2
     template_name = 'recipes/index.html'
 
 
@@ -41,6 +42,7 @@ class ProfileView(DetailView):
 
 class SubscriptionsView(ListView):
     context_object_name = 'authors'
+    paginate_by = 6
     template_name = 'recipes/myFollow.html'
 
     def get_queryset(self):
@@ -161,6 +163,7 @@ class UpdateRecipeView(UpdateView):
 class FavoritesView(ListView):
     context_object_name = 'favorites'
     model = Recipe
+    paginate_by = 6
     template_name = 'recipes/favorite.html'
 
     def get_queryset(self):
@@ -173,6 +176,7 @@ class FavoritesView(ListView):
 class PurchasesView(ListView):
     context_object_name = 'purchases'
     model = Purchase
+    paginate_by = 6
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):

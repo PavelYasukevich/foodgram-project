@@ -16,7 +16,9 @@
             {% include 'includes/user_card.html' with author=author %}
         {% endfor %}
     </div>
-    {% include 'includes/paginator.html' %}
+    {% if page_obj.has_other_pages %}
+        {% include "includes/paginator.html" with page=page_obj paginator=paginator %}
+    {% endif %}
 </main>
 {% endblock %}
 
