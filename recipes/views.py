@@ -51,8 +51,11 @@ class SubscriptionsView(ListView):
 class CreateDestroyViewset(
     viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.DestroyModelMixin
 ):
-    pass
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(data={'success': True}, status=status.HTTP_200_OK)
 
 class SubscriptionsViewSet(CreateDestroyViewset):
     serializer_class = SubscriptionsSerializer
@@ -71,7 +74,10 @@ class SubscriptionsViewSet(CreateDestroyViewset):
     def create(self, request, *args, **kwargs):
         user = self.request.user
         serializer = self.get_serializer(
-            data={'user': user.id, 'author': self.request.data['id']}
+            data={
+                'user': user.id,
+                'author': self.request.data['id'],
+            }
         )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -199,7 +205,10 @@ class FavoritesViewSet(CreateDestroyViewset):
     def create(self, request, *args, **kwargs):
         user = self.request.user
         serializer = self.get_serializer(
-            data={'user': user.id, 'recipe': self.request.data['id']}
+            data={
+                'user': user.id,
+                'recipe': self.request.data['id'],
+            }
         )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -232,7 +241,10 @@ class PurchasesViewSet(CreateDestroyViewset):
     def create(self, request, *args, **kwargs):
         user = self.request.user
         serializer = self.get_serializer(
-            data={'user': user.id, 'recipe': self.request.data['id']}
+            data={
+                'user': user.id,
+                'recipe': self.request.data['id'],
+            }
         )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

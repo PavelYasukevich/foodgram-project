@@ -15,7 +15,11 @@
                 <div class="single-card__header-info">
                     <h1 class="single-card__title">{{ recipe.name }}</h1>
                     <div class="single-card__favorite">
-                        <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big"></span></button>
+                        {% if recipe|in_favorites:user %}
+                            <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_big icon-favorite_active"></span></button>
+                        {% else %}
+                            <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big"></span></button>
+                        {% endif %}
                         <div class="single-card__favorite-tooltip tooltip">Добавить в избранное</div>
                     </div>
                 </div>
@@ -51,11 +55,15 @@
                 </div>
 
                     <ul class="single-card__items">
-                        <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button></li>
+                        {% if recipe|in_purchases:user %}
+                            <li class="single-card__item"><button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check"></span> Рецепт добавлен</button></li>
+                        {% else %}
+                            <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button></li>
+                        {% endif %}
                         {% if request.user.is_authenticated %}
                             {% if recipe.author|in_subscriptions:request.user %}
                                 <div class="author-subscribe" data-author="{{ author.id }}">
-                                    <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться</button></li>
+                                    <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></li>
                                 </div>
                             {% else%}
                                 <div class="author-subscribe" data-author="{{ author.id }}">
