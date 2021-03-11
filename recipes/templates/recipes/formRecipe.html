@@ -26,11 +26,18 @@
                 <p class="form__label">Теги</p>
                 <div class="form__field-group">
                     <div class="tags">
-                        {% if recipe %}
-                            {% render_tags form.tags recipe=recipe %}
-                        {% else %}
-                            {% render_tags form.tags %}
-                        {% endif %}
+                        {% for tag in tags %}
+                            <div class="tags__item">
+                                <input
+                                    type="checkbox"
+                                    name="{{ tag.name }}"
+                                    id="{{ tag.id }}"
+                                    class="tags__checkbox tags__checkbox_style_{{ tag.color }}"
+                                    {% if tag in recipe.tags.all %}checked{% endif %}
+                                >
+                                <label for="{{ tag.id_for_label }}" class="tags__label">{{ tag.get_name_display }}</label>
+                            </div>
+                        {% endfor %}
                     </div>
                     <span class="form__error">{{ form.tags.errors }}</span>
                 </div>

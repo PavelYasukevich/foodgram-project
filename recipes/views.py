@@ -22,6 +22,7 @@ User = get_user_model()
 
 class IndexView(ListView):
     context_object_name = 'recipes'
+    extra_context = {'tags': Tag.objects.all()}
     model = Recipe
     template_name = 'recipes/index.html'
 
@@ -57,6 +58,7 @@ class CreateDestroyViewset(
         self.perform_destroy(instance)
         return Response(data={'success': True}, status=status.HTTP_200_OK)
 
+
 class SubscriptionsViewSet(CreateDestroyViewset):
     serializer_class = SubscriptionsSerializer
 
@@ -89,15 +91,17 @@ class SubscriptionsViewSet(CreateDestroyViewset):
 
 def create_new_recipe(request):
     form = RecipeForm(request.POST or None, request.FILES or None)
+    tags = Tag.objects.all()
     if form.is_valid():
         new_recipe = form.save(commit=False)
         new_recipe.author = request.user
         new_recipe.slug = slugify(new_recipe.name)
         new_recipe.save()
 
-        for tag_id in request.POST.getlist('tags'):
-            tag_to_add = get_object_or_404(Tag, id=tag_id)
-            new_recipe.tags.add(tag_to_add)
+        for tag_name, _ in Tag.CHOICES:
+            if request.POST.get(tag_name) is not None:
+                tag_to_add = get_object_or_404(Tag, name=tag_name)
+                new_recipe.tags.add(tag_to_add)
 
         for name, value in request.POST.items():
             if name.startswith('nameIngredient_'):
@@ -112,11 +116,12 @@ def create_new_recipe(request):
                 new_recipe.ingredients.add(ingr_to_add)
         return redirect('index')
 
-    return render(request, 'recipes/formRecipe.html', {'form': form})
+    return render(request, 'recipes/formRecipe.html', {'form': form, 'tags': tags})
 
 
 class UpdateRecipeView(UpdateView):
     context_object_name = 'recipe'
+    extra_context = {'tags': Tag.objects.all()}
     form_class = RecipeForm
     template_name = 'recipes/formRecipe.html'
     queryset = Recipe.objects.all()
@@ -126,9 +131,10 @@ class UpdateRecipeView(UpdateView):
         self.object.slug = slugify(self.object.name)
 
         new_tags = []
-        for tag_id in self.request.POST.getlist('tags'):
-            tag_to_add = get_object_or_404(Tag, id=tag_id)
-            new_tags.append(tag_to_add)
+        for tag_name, _ in Tag.CHOICES:
+            if self.request.POST.get(tag_name) is not None:
+                tag_to_add = get_object_or_404(Tag, name=tag_name)
+                new_tags.append(tag_to_add)
         self.object.tags.set(new_tags)
 
         new_ingrs = []

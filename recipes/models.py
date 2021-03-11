@@ -3,7 +3,6 @@ from django.db import models
 from django.urls import reverse
 
 User = get_user_model()
-TAG_CHOICES = [('breakfast', 'Завтрак'), ('lunch', 'Обед'), ('dinner', 'Ужин')]
 
 
 class Recipe(models.Model):
@@ -150,12 +149,18 @@ class Purchase(models.Model):
 
 
 class Tag(models.Model):
+    CHOICES = [
+        ('breakfast', 'Завтрак'),
+        ('lunch', 'Обед'),
+        ('dinner', 'Ужин')
+    ]
+
     name = models.CharField(
         max_length=10,
         unique=True,
         verbose_name='Тег',
         help_text='Тег',
-        choices=TAG_CHOICES,
+        choices=CHOICES,
     )
 
     def __str__(self):
@@ -165,7 +170,7 @@ class Tag(models.Model):
     def color(self):
         colors = {'breakfast': 'orange', 'lunch': 'green', 'dinner': 'purple'}
         return colors[self.name]
-        
+
 
 class Subscription(models.Model):
     user = models.ForeignKey(

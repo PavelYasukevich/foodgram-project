@@ -10,7 +10,7 @@
     <main class="main container">
         <div class="main__header">
             <h1 class="main__title">Рецепты</h1>
-            {% include 'includes/tag_filters.html' %}
+            {% include 'includes/tag_filters.html' with tags=tags %}
         </div>
         <div class="card-list">
             {% for recipe in recipes %}
