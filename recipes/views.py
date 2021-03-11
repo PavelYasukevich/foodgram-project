@@ -11,7 +11,7 @@ from pytils.translit import slugify
 
 from .forms import RecipeForm
 from .models import Amount, Favorite, Ingredient, Purchase, Recipe, Subscription, Tag
-from .serializers import FavoritesSerializer, IngredientSerializer, SubscriptionsSerializer
+from .serializers import FavoritesSerializer, IngredientSerializer, PurchaseSerializer, SubscriptionsSerializer
 
 
 User = get_user_model()
@@ -149,8 +149,16 @@ class FavoritesView(ListView):
 
 
 class PurchasesView(ListView):
+    context_object_name = 'purchases'
     model = Purchase
     template_name = 'recipes/purchaseList.html'
+
+    def get_queryset(self):
+        user = get_object_or_404(User, id=self.request.user.id)
+        user_purchases = user.purchases.values_list('recipe__id', flat=True)
+        queryset = Recipe.objects.filter(id__in=user_purchases)
+        return queryset
+
 
 
 class IngredientsViewSet(viewsets.GenericViewSet,
@@ -187,8 +195,28 @@ class FavoritesViewSet(CreateDestroyViewset):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-
 class DeleteRecipeView(DeleteView):
     model = Recipe
     template_name = 'recipes/deleteRecipe.html'
     success_url = reverse_lazy('index')
+
+
+class PurchasesViewSet(CreateDestroyViewset):
+    serializer_class = PurchaseSerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        obj = get_object_or_404(queryset, recipe__id=self.kwargs[self.lookup_field])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def get_queryset(self):
+        return self.request.user.purchases.all()
+
+    def create(self, request, *args, **kwargs):
+        user= self.request.user
+        serializer = self.get_serializer(data={'user': user.id, 'recipe': self.request.data['id']})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

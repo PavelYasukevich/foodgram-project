@@ -17,7 +17,7 @@
         {% if request.user.is_authenticated %}
             {% if author|in_subscriptions:request.user %}
                 <div class="author-subscribe" data-author="{{ author.id }}">
-                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться</button></p>
+                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></p>
                 </div>
             {% else%}
                 <div class="author-subscribe" data-author="{{ author.id }}">
