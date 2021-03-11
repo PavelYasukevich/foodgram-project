@@ -3,7 +3,7 @@ from django.db import models
 from django.urls import reverse
 
 User = get_user_model()
-TAG_CHOICES = [('zv', 'Завтрак'), ('ob', 'Обед'), ('uz', 'Ужин')]
+TAG_CHOICES = [('breakfast', 'Завтрак'), ('lunch', 'Обед'), ('dinner', 'Ужин')]
 
 
 class Recipe(models.Model):
@@ -161,6 +161,11 @@ class Tag(models.Model):
     def __str__(self):
         return self.get_name_display()
 
+    @property
+    def color(self):
+        colors = {'breakfast': 'orange', 'lunch': 'green', 'dinner': 'purple'}
+        return colors[self.name]
+        
 
 class Subscription(models.Model):
     user = models.ForeignKey(
