@@ -130,3 +130,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 }
+
+OBJECTS_PER_PAGE = 6

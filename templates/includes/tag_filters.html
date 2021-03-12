@@ -1,9 +1,15 @@
 {% load static %}
 
 <ul class="tags">
+    <!-- {{ request.resolver_match }} -->
+
     {% for tag in tags %}
         <li class="tags__item">
-            <a id="{{ tag.name }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }} tags__checkbox_active" href="{% url 'index' %}"></a>
+            <a
+                id="{{ tag.name }}"
+                class="tags__checkbox tags__checkbox_style_{{ tag.color }} {% if request.GET.filter == tag.name %}tags__checkbox_active{% endif %}"
+                href="{% url 'index' %}?filter={{tag.name}}"
+            ></a>
             <span class="tags__label"> {{ tag }}</span>
         </li>
     {% endfor %}

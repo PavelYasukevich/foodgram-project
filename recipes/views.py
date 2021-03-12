@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -42,7 +43,7 @@ class ProfileView(DetailView):
 
 class SubscriptionsView(ListView):
     context_object_name = 'authors'
-    paginate_by = 6
+    paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/myFollow.html'
 
     def get_queryset(self):
@@ -76,11 +77,10 @@ class SubscriptionsViewSet(CreateDestroyViewset):
         return self.request.user.subscriptions.all()
 
     def create(self, request, *args, **kwargs):
-        user = self.request.user
         serializer = self.get_serializer(
             data={
-                'user': user.id,
-                'author': self.request.data['id'],
+                'user': request.user.id,
+                'author': request.data['id'],
             }
         )
         serializer.is_valid(raise_exception=True)
@@ -163,7 +163,7 @@ class UpdateRecipeView(UpdateView):
 class FavoritesView(ListView):
     context_object_name = 'favorites'
     model = Recipe
-    paginate_by = 6
+    paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/favorite.html'
 
     def get_queryset(self):
@@ -176,7 +176,7 @@ class FavoritesView(ListView):
 class PurchasesView(ListView):
     context_object_name = 'purchases'
     model = Purchase
-    paginate_by = 6
+    paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):
@@ -213,11 +213,10 @@ class FavoritesViewSet(CreateDestroyViewset):
         return self.request.user.favorites.all()
 
     def create(self, request, *args, **kwargs):
-        user = self.request.user
         serializer = self.get_serializer(
             data={
-                'user': user.id,
-                'recipe': self.request.data['id'],
+                'user': request.user.id,
+                'recipe': request.data['id'],
             }
         )
         serializer.is_valid(raise_exception=True)
@@ -249,11 +248,10 @@ class PurchasesViewSet(CreateDestroyViewset):
         return self.request.user.purchases.all()
 
     def create(self, request, *args, **kwargs):
-        user = self.request.user
         serializer = self.get_serializer(
             data={
-                'user': user.id,
-                'recipe': self.request.data['id'],
+                'user': request.user.id,
+                'recipe': request.data['id'],
             }
         )
         serializer.is_valid(raise_exception=True)

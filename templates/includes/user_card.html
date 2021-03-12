@@ -1,7 +1,7 @@
 {% load static %}
 <div class="card-user" data-author="{{ author.id }}">
     <div class="card-user__header">
-        <h2 class="card-user__title">{{ author.username }}</h2>
+        <h2 class="card-user__title" ><a href="{% url 'profile' author.id %}">{{ author.username }}</a></h2>
     </div>
     <div class="card-user__body">
         <ul class="card-user__items">
@@ -18,9 +18,7 @@
                 <a href="{% url 'profile' author.id %}" class="card-user__link link">
                     {% if author.recipes.count|add:"-3" > 0 %}
                         Еще {{ author.recipes.count|add:"-3" }} рецептов...
-                    {% else %}
-                        На страничку автора...
-                    {% endif %}
+                        {% endif %}
                 </a>
             </li>
         </ul>

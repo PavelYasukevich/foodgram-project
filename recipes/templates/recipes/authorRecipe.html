@@ -14,8 +14,8 @@
             {% include 'includes/tag_filters.html' %}
         </div>
 
-        {% if request.user.is_authenticated %}
-            {% if author|in_subscriptions:request.user %}
+        {% if user.is_authenticated and user != author %}
+            {% if author|in_subscriptions:user %}
                 <div class="author-subscribe" data-author="{{ author.id }}">
                     <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></p>
                 </div>
