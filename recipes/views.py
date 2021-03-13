@@ -74,7 +74,7 @@ class ProfileView(ListView):
         return queryset
 
 
-class SubscriptionsView(ListView):
+class SubscriptionsView(LoginRequiredMixin, ListView):
     context_object_name = 'authors'
     model = User
     paginate_by = settings.OBJECTS_PER_PAGE
@@ -125,6 +125,7 @@ class SubscriptionsViewSet(CreateDestroyViewset):
         )
 
 
+@login_required
 def create_new_recipe(request):
     form = RecipeForm(request.POST or None, request.FILES or None)
     tags = Tag.objects.all()
@@ -155,7 +156,7 @@ def create_new_recipe(request):
     return render(request, 'recipes/formRecipe.html', {'form': form, 'tags': tags})
 
 
-class UpdateRecipeView(UpdateView):
+class UpdateRecipeView(LoginRequiredMixin, UpdateView):
     context_object_name = 'recipe'
     extra_context = {'tags': Tag.objects.all()}
     form_class = RecipeForm
@@ -194,7 +195,7 @@ class UpdateRecipeView(UpdateView):
         return redirect(self.get_success_url())
 
 
-class FavoritesView(ListView):
+class FavoritesView(LoginRequiredMixin, ListView):
     context_object_name = 'favorites'
     model = Recipe
     ordering = '-pub_date'
@@ -218,7 +219,7 @@ class FavoritesView(ListView):
         return queryset
 
 
-class PurchasesView(ListView):
+class PurchasesView(LoginRequiredMixin, ListView):
     context_object_name = 'purchases'
     model = Recipe
     ordering = '-pub_date'
@@ -232,7 +233,7 @@ class PurchasesView(ListView):
         return queryset
 
 
-class DownloadShoppingList(PDFView):
+class DownloadShoppingList(LoginRequiredMixin, PDFView):
     template_name = 'recipes/aux/shopping_list.html'
 
     def get_context_data(self, **kwargs):
@@ -292,7 +293,7 @@ class FavoritesViewSet(CreateDestroyViewset):
         )
 
 
-class DeleteRecipeView(DeleteView):
+class DeleteRecipeView(LoginRequiredMixin, DeleteView):
     model = Recipe
     template_name = 'recipes/deleteRecipe.html'
     success_url = reverse_lazy('index')
