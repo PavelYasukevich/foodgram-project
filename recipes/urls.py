@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
+from django_pdfkit import PDFView
 
 from . import views
 
@@ -38,5 +39,6 @@ urlpatterns = [
     ),
     path('favorites/', views.FavoritesView.as_view(), name='favorites'),
     path('purchases/', views.PurchasesView.as_view(), name='purchases'),
+    path('download/', views.DownloadShoppingList.as_view(), name='download'),
     path('', views.IndexView.as_view(), name='index'),
 ]

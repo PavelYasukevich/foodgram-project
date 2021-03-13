@@ -20,11 +20,13 @@
                         <h3 class="recipe__title">{{ recipe.name }}</h3>
                         <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
                     </div>
-                    <a href="#" class="shopping-list__button link">Удалить</a>
+                    <a type="button" class="shopping-list__button link">Удалить</a>
                 </li>
             {% endfor %}
         </ul>
-        <a href="#"><button class="button button_style_blue">Скачать список</button></a>
+        {% if purchases %}
+            <a href="{% url 'download' %}"><button class="button button_style_blue">Скачать список</button></a>
+        {% endif %}
 
 
     </div>

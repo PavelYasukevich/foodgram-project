@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
+from django_pdfkit import PDFView
 from pytils.translit import slugify
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
@@ -228,6 +229,25 @@ class PurchasesView(ListView):
         user_purchases = user.purchases.values_list('recipe__id', flat=True)
         queryset = super().get_queryset().filter(id__in=user_purchases)
         return queryset
+
+
+class DownloadShoppingList(PDFView):
+    template_name = 'recipes/aux/shopping_list.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        purchase_list = {}
+        purchases = self.request.user.purchases.select_related('recipe').all()
+        for purchase in purchases:
+            ingredients = purchase.recipe.ingredients.all()
+            for ingr in ingredients:
+                amount = Amount.objects.get(recipe=purchase.recipe, ingredient=ingr).value
+                purchase_list[ingr] = purchase_list.get(ingr, 0) + amount
+
+        kwargs.update(
+            {'purchase_list': purchase_list}
+        )
+        return kwargs
 
 
 class IngredientsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
