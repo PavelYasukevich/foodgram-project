@@ -9,7 +9,7 @@ from pytils.translit import slugify
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
-from .forms import RecipeForm
+from .forms import FilterForm, RecipeForm
 from .models import Amount, Ingredient, Purchase, Recipe, Tag
 from .serializers import (
     FavoritesSerializer,
@@ -23,10 +23,22 @@ User = get_user_model()
 
 class IndexView(ListView):
     context_object_name = 'recipes'
-    extra_context = {'tags': Tag.objects.all()}
     model = Recipe
-    paginate_by = 2
+    paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterform'] = FilterForm(self.request.GET)
+        return context
+
+    def get_queryset(self):
+        tags = self.request.GET.getlist('tags')
+        queryset = Recipe.objects.all()
+        if tags:
+            for tag in tags:
+                queryset = queryset.filter(tags__name__contains=tag)
+        return queryset
 
 
 class RecipeDetailView(DetailView):

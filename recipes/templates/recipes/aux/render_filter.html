@@ -1,0 +1,10 @@
+{% load static %}
+
+<ul class="tags">
+    {% for field, tag in items %}
+        <li class="tags__item">
+            {{ field.tag }}
+            <span class="tags__label"> {{ field.choice_label }}</span>
+        </li>
+    {% endfor %}
+</ul>

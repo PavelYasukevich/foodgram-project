@@ -38,3 +38,14 @@ def render_recipe_edit_ingrs(recipe):
         amount = recipe_amounts.get(ingredient=ingr.id)
         current_ingrs.append((idx, ingr, amount.value))
     return {'current_ingrs': current_ingrs}
+
+
+@register.inclusion_tag('recipes/aux/render_filter.html', takes_context=True)
+def render_filter(context, items):
+    data = []
+    for item in items:  
+        name = item.data['value'].value
+        obj = Tag.objects.get(name=name)
+        item.data['attrs']['class'] = f'tags__checkbox tags__checkbox_style_{obj.color}'
+        data.append((item, obj))
+    return {'items': data}
