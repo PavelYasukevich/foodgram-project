@@ -26,9 +26,9 @@
         </ul>
         {% if purchases %}
             <a href="{% url 'download' %}"><button class="button button_style_blue">Скачать список</button></a>
+        {% else %}
+            <h3 class="single-card__section-text">Ваш список пока пуст.</h3>
         {% endif %}
-
-
     </div>
 </main>
 {% endblock %}
