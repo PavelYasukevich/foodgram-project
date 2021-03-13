@@ -28,6 +28,15 @@ def in_purchases(recipe, user):
     return  Purchase.objects.filter(recipe=recipe, user=user).exists()
 
 
+@register.simple_tag
+def add_filter(req_args):
+    output = ''
+    if req_args:
+        for arg in req_args:
+            output = f'{output}&tags={arg}'
+    return output
+
+
 @register.inclusion_tag('recipes/aux/render_edit_recipe_ingrs.html', name='edit_recipe_ingrs')
 @register.inclusion_tag('recipes/aux/render_single_recipe_ingrs.html', name='single_recipe_ingrs')
 def render_recipe_edit_ingrs(recipe):

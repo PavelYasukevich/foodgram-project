@@ -16,7 +16,7 @@ router.register(
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
+    path('profile/<int:id>/', views.ProfileView.as_view(), name='profile'),
     path('recipe/new/', views.create_new_recipe, name='new_recipe'),
     path(
         'recipe/<slug:slug>/', views.RecipeDetailView.as_view(), name='recipe'
