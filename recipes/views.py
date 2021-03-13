@@ -178,10 +178,19 @@ class FavoritesView(ListView):
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/favorite.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterform'] = FilterForm(self.request.GET)
+        return context
+
     def get_queryset(self):
         user = get_object_or_404(User, id=self.request.user.id)
         user_favs = user.favorites.values_list('recipe__id', flat=True)
         queryset = Recipe.objects.filter(id__in=user_favs)
+        tags = self.request.GET.getlist('tags')
+        if tags:
+            for tag in tags:
+                queryset = queryset.filter(tags__name__contains=tag)
         return queryset
 
 

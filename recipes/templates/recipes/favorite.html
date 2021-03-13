@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block head %}
     <title>Избранное</title>
@@ -10,7 +11,9 @@
     <main class="main container">
         <div class="main__header">
             <h1 class="main__title">Избранное</h1>
-            {% include 'includes/tag_filters.html' %}
+            <form method="get" id="formID" onchange="document.getElementById('formID').submit()">
+                {% render_filter filterform.tags %}
+            </form>
         </div>
         <div class="card-list">
             {% for recipe in favorites %}
