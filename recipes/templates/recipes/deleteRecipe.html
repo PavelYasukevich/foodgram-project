@@ -11,15 +11,10 @@
     <div class="custom-center-block">
         <form method="post" action="{% url 'delete_recipe' recipe.slug %}">
             {% csrf_token %}
-            <p>Уверены, что хотите удалить "{{ object.name }}"?</p>
+            <h3>Уверены, что хотите удалить "{{ object.name }}"?</h3>
             <button type="submit" class="button button_style_blue">Уверен!</button>
+            <a href="{% url 'index' %}"><button class="button button_style_blue">Нет, вернуться на главную</button></a>
         </form>
-
-        <div class="custom-button-block">
-            <a href="{% url 'index' %}" class="button button_style_blue">Нет, вернуться на главную</a>
-        </div>
     </div>
-
-
 </main>
 {% endblock %}
