@@ -24,7 +24,8 @@ User = get_user_model()
 class IndexView(ListView):
     context_object_name = 'recipes'
     model = Recipe
-    paginate_by = settings.OBJECTS_PER_PAGE
+    ordering = '-pub_date'
+    paginate_by = 2
     template_name = 'recipes/index.html'
 
     def get_context_data(self, **kwargs):
@@ -33,8 +34,8 @@ class IndexView(ListView):
         return context
 
     def get_queryset(self):
+        queryset = super().get_queryset()
         tags = self.request.GET.getlist('tags')
-        queryset = Recipe.objects.all()
         if tags:
             for tag in tags:
                 queryset = queryset.filter(tags__name__contains=tag)
@@ -52,15 +53,28 @@ class ProfileView(DetailView):
     model = User
     template_name = 'recipes/authorRecipe.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterform'] = FilterForm(self.request.GET)
+
+        recipes = Recipe.objects.all().order_by('-pub_date')
+        tags = self.request.GET.getlist('tags')
+        if tags:
+            for tag in tags:
+                recipes = recipes.filter(tags__name__contains=tag)
+        context['author_recipes'] = recipes
+        return context
+
 
 class SubscriptionsView(ListView):
     context_object_name = 'authors'
+    model = User
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/myFollow.html'
 
     def get_queryset(self):
         user = get_object_or_404(User, id=self.request.user.id)
-        queryset = User.objects.filter(subscribers__user__id=user.id)
+        queryset = super().get_queryset().filter(subscribers__user__id=user.id)
         return queryset
 
 
@@ -175,6 +189,7 @@ class UpdateRecipeView(UpdateView):
 class FavoritesView(ListView):
     context_object_name = 'favorites'
     model = Recipe
+    ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/favorite.html'
 
@@ -186,7 +201,7 @@ class FavoritesView(ListView):
     def get_queryset(self):
         user = get_object_or_404(User, id=self.request.user.id)
         user_favs = user.favorites.values_list('recipe__id', flat=True)
-        queryset = Recipe.objects.filter(id__in=user_favs)
+        queryset = super().get_queryset().filter(id__in=user_favs)
         tags = self.request.GET.getlist('tags')
         if tags:
             for tag in tags:
@@ -196,14 +211,15 @@ class FavoritesView(ListView):
 
 class PurchasesView(ListView):
     context_object_name = 'purchases'
-    model = Purchase
+    model = Recipe
+    ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):
         user = get_object_or_404(User, id=self.request.user.id)
         user_purchases = user.purchases.values_list('recipe__id', flat=True)
-        queryset = Recipe.objects.filter(id__in=user_purchases)
+        queryset = super().get_queryset().filter(id__in=user_purchases)
         return queryset
 
 

@@ -11,7 +11,9 @@
     <main class="main container">
         <div class="main__header">
             <h1 class="main__title">{{ author.username }}</h1>
-            {% include 'includes/tag_filters.html' %}
+            <form method="get" id="formID" onchange="document.getElementById('formID').submit()">
+                {% render_filter filterform.tags %}
+            </form>
         </div>
 
         {% if user.is_authenticated and user != author %}
@@ -27,7 +29,7 @@
         {% endif %}
 
         <div class="card-list">
-            {% for recipe in author.recipes.all %}
+            {% for recipe in author_recipes %}
                 {% include "includes/recipe_card.html" with recipe=recipe %}
             {% endfor %}
         </div>
