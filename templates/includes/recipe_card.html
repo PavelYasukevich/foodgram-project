@@ -4,7 +4,7 @@
 <div class="card" data-id="{{ recipe.id }}">
     <a href="{% url 'recipe' recipe.slug %}" class="link"><img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="card__image"></a>
     <div class="card__body">
-        <a class="card__title link" href="{% url 'recipe' recipe.slug %}">{{ recipe.name }}</a>
+        <a class="card__title link" href="{% url 'recipe' recipe.slug %}">{{ recipe.name|capfirst }}</a>
         <ul class="card__items">
             {% for tag in recipe.tags.all %}
                 <li class="card__item"><span class="badge badge_style_{{ tag.color }}">{{ tag.get_name_display }}</span></li>
