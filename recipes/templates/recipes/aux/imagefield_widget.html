@@ -1,0 +1,11 @@
+{% load static %}
+<label for="file-upload" class="button form__file-button">Выбрать файл</label>
+<input type="file" name="image" id="file-upload" style="display:none">
+
+{% if widget.is_initial %}
+    <span class="form__label">
+        <a href="{{ widget.value.url }}">{{ widget.value|cut:"recipes/" }}</a>
+        <img src="{% static 'images/icons8-delete-16.png' %}">
+    </span>
+    <br>
+{% endif %}

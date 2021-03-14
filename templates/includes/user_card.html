@@ -8,8 +8,8 @@
             {% for recipe in author.recipes.all|slice:"3" %}
                 <li class="card-user__item">
                     <div class="recipe">
-                        <img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image">
-                        <h3 class="recipe__title">{{ recipe.name }}</h3>
+                        <a href="{% url 'recipe' recipe.slug %}" class="link"><img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image"></a>
+                        <a href="{% url 'recipe' recipe.slug %}" class="recipe__title">{{ recipe.name|capfirst }}</a>
                         <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
                     </div>
                 </li>

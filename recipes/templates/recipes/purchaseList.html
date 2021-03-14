@@ -16,8 +16,8 @@
             {% for recipe in purchases %}
                 <li class="shopping-list__item" data-id="{{ recipe.id }}">
                     <div class="recipe recipe_reverse">
-                        <img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image recipe__image_big">
-                        <h3 class="recipe__title">{{ recipe.name }}</h3>
+                        <a href="{% url 'recipe' recipe.slug %}" class="link"><img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image recipe__image_big"></a>
+                        <a href="{% url 'recipe' recipe.slug %}"><h3 class="recipe__title">{{ recipe.name|capfirst }}</h3></a>
                         <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
                     </div>
                     <a type="button" class="shopping-list__button link">Удалить</a>
