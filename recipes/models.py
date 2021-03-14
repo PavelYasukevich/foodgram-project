@@ -48,15 +48,16 @@ class Recipe(models.Model):
         verbose_name='Дата публикации',
         help_text='Дата публикации',
     )
-    fav_counter = models.PositiveSmallIntegerField(
-        verbose_name='Добавлений в избранное',
-        help_text='Счетчик добавлений в избранное',
-        default=0,
-    )
     slug = models.SlugField(
         unique=True,
         max_length=100,
     )
+
+    def added_in_favorites(self):
+        return self.favorites.all().count()
+    added_in_favorites.short_description = "Добавлений в избранное"
+    fav_counter = property(added_in_favorites)
+
 
     class Meta:
         ordering = ['-pub_date']
@@ -211,7 +212,7 @@ class Favorite(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='+',
+        related_name='favorites',
         verbose_name='Рецепт',
         help_text='Рецепт',
     )

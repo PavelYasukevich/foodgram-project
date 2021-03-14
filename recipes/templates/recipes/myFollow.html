@@ -16,6 +16,11 @@
             {% include 'includes/user_card.html' with author=author %}
         {% endfor %}
     </div>
+
+    {% if not authors %}
+        <h3 class="single-card__section-text">Вы не подписаны ни на одного автора.</h3>
+    {% endif %}
+
     {% if page_obj.has_other_pages %}
         {% include "includes/paginator.html" with page=page_obj paginator=paginator %}
     {% endif %}
