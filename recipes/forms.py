@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Amount, Ingredient, Recipe, Tag
+from .models import Recipe, Tag
 
 
 class ImageFieldWidget(forms.ClearableFileInput):

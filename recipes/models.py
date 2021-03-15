@@ -58,7 +58,6 @@ class Recipe(models.Model):
     added_in_favorites.short_description = "Добавлений в избранное"
     fav_counter = property(added_in_favorites)
 
-
     class Meta:
         ordering = ['-pub_date']
 

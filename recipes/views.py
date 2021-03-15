@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
@@ -12,13 +11,9 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
 from .forms import FilterForm, RecipeForm
-from .models import Amount, Ingredient, Purchase, Recipe, Tag
-from .serializers import (
-    FavoritesSerializer,
-    IngredientSerializer,
-    PurchaseSerializer,
-    SubscriptionsSerializer,
-)
+from .models import Amount, Ingredient, Recipe, Tag
+from .serializers import (FavoritesSerializer, IngredientSerializer,
+                          PurchaseSerializer, SubscriptionsSerializer)
 
 User = get_user_model()
 
@@ -153,7 +148,11 @@ def create_new_recipe(request):
                 new_recipe.ingredients.add(ingr_to_add)
         return redirect('index')
 
-    return render(request, 'recipes/formRecipe.html', {'form': form, 'tags': tags})
+    return render(
+        request,
+        'recipes/formRecipe.html',
+        {'form': form, 'tags': tags}
+    )
 
 
 class UpdateRecipeView(LoginRequiredMixin, UpdateView):
@@ -243,7 +242,10 @@ class DownloadShoppingList(LoginRequiredMixin, PDFView):
         for purchase in purchases:
             ingredients = purchase.recipe.ingredients.all()
             for ingr in ingredients:
-                amount = Amount.objects.get(recipe=purchase.recipe, ingredient=ingr).value
+                amount = Amount.objects.get(
+                    recipe=purchase.recipe,
+                    ingredient=ingr
+                ).value
                 purchase_list[ingr] = purchase_list.get(ingr, 0) + amount
 
         kwargs.update(
