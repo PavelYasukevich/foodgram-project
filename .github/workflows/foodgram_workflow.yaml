@@ -57,13 +57,15 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          echo DB_ENGINE=${{ secrets.DB_ENGINE }} > .env
-          echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-          echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          export DB_ENGINE=${{ secrets.DB_ENGINE }}
+          export DB_NAME=${{ secrets.DB_NAME }}
+          export DB_USER=${{ secrets.DB_USER }}
+          export DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
+          export DB_HOST=${{ secrets.DB_HOST }}
+          export DB_PORT=${{ secrets.DB_PORT }}
+          export EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}
+          export EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
+          export SECRET_KEY=${{ secrets.SECRET_KEY }}
 
     - name: executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
