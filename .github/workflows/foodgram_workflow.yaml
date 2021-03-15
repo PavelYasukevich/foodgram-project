@@ -57,15 +57,15 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          export DB_ENGINE=${{ secrets.DB_ENGINE }}
-          export DB_NAME=${{ secrets.DB_NAME }}
-          export DB_USER=${{ secrets.DB_USER }}
-          export DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
-          export DB_HOST=${{ secrets.DB_HOST }}
-          export DB_PORT=${{ secrets.DB_PORT }}
-          export EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}
-          export EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
-          export SECRET_KEY=${{ secrets.SECRET_KEY }}
+          echo DB_ENGINE=${{ secrets.DB_ENGINE }} > ~/foodgram/.env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> ~/foodgram/.env
+          echo DB_USER=${{ secrets.DB_USER }} >> ~/foodgram/.env
+          echo DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }} >> ~/foodgram/.env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> ~/foodgram/.env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> ~/foodgram/.env
+          echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> ~/foodgram/.env
+          echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> ~/foodgram/.env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> ~/foodgram/.env
 
     - name: executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
