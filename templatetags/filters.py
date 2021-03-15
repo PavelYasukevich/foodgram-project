@@ -1,7 +1,7 @@
 from django import template
 from django.contrib.auth import get_user_model
 
-from recipes.models import Favorite, Purchase, Tag, Recipe, Subscription
+from recipes.models import Favorite, Purchase, Tag, Subscription
 
 
 User = get_user_model()
@@ -25,7 +25,7 @@ def in_favorites(recipe, user):
 
 @register.filter
 def in_purchases(recipe, user):
-    return  Purchase.objects.filter(recipe=recipe, user=user).exists()
+    return Purchase.objects.filter(recipe=recipe, user=user).exists()
 
 
 @register.simple_tag
@@ -37,8 +37,14 @@ def add_filter(req_args):
     return output
 
 
-@register.inclusion_tag('recipes/aux/render_edit_recipe_ingrs.html', name='edit_recipe_ingrs')
-@register.inclusion_tag('recipes/aux/render_single_recipe_ingrs.html', name='single_recipe_ingrs')
+@register.inclusion_tag(
+    'recipes/aux/render_edit_recipe_ingrs.html',
+    name='edit_recipe_ingrs'
+)
+@register.inclusion_tag(
+    'recipes/aux/render_single_recipe_ingrs.html',
+    name='single_recipe_ingrs'
+)
 def render_recipe_edit_ingrs(recipe):
     current_ingrs = []
     recipe_ingrs = recipe.ingredients.all()
@@ -52,9 +58,11 @@ def render_recipe_edit_ingrs(recipe):
 @register.inclusion_tag('recipes/aux/render_filter.html', takes_context=True)
 def render_filter(context, items):
     data = []
-    for item in items:  
+    for item in items:
         name = item.data['value'].value
         obj = Tag.objects.get(name=name)
-        item.data['attrs']['class'] = f'tags__checkbox tags__checkbox_style_{obj.color}'
+        item.data['attrs']['class'] = (
+            f'tags__checkbox tags__checkbox_style_{obj.color}'
+        )
         data.append((item, obj))
     return {'items': data}
