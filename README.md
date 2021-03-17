@@ -1,3 +1,5 @@
+[![Foodgram workflow](https://github.com/PavelYasukevich/foodgram-project/actions/workflows/foodgram_workflow.yaml/badge.svg)](https://github.com/PavelYasukevich/foodgram-project/actions/workflows/foodgram_workflow.yaml)
+
 # Проект Foodgram - продуктовый помощник
 
 Foodgram - это продуктовый помощник, сервис для публикации рецептов с возможностью составить список покупок для приготовления выбранных блюд.
@@ -24,4 +26,3 @@ Foodgram - это продуктовый помощник, сервис для �
 ## Лицензия
 
 Проект использует лицензию MIT - [LICENSE.md](LICENSE.md)
-<!--  -->

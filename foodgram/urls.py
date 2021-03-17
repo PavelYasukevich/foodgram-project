@@ -31,7 +31,6 @@ urlpatterns += [
     ),
 ]
 
-
 handler404 = "recipes.views.page_not_found"  # noqa
 handler500 = "recipes.views.server_error"  # noqa
 
