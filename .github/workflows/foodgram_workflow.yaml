@@ -81,7 +81,5 @@ jobs:
           sudo docker cp $id:/foodgram/docker-compose.yaml ~/foodgram/docker-compose.yaml
           cd ~/foodgram
           sudo docker-compose down
-          docker volume rm foodgram_nginx_conf
-          docker volume rm foodgram_staticfiles
           sudo docker-compose rm -v
           sudo docker-compose up -d --force-recreate
