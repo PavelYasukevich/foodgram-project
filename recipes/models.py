@@ -20,7 +20,7 @@ class Recipe(models.Model):
     )
     image = models.ImageField(
         verbose_name='Изображение',
-        help_text='Изображение',
+        help_text='Размер файла не более 5Мб',
         upload_to='recipes/',
     )
     description = models.TextField(

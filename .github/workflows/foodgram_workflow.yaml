@@ -57,15 +57,16 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          echo DB_ENGINE=${{ secrets.DB_ENGINE }} > ~/foodgram/.env
-          echo DB_NAME=${{ secrets.DB_NAME }} >> ~/foodgram/.env
-          echo DB_USER=${{ secrets.DB_USER }} >> ~/foodgram/.env
-          echo DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }} >> ~/foodgram/.env
-          echo DB_HOST=${{ secrets.DB_HOST }} >> ~/foodgram/.env
-          echo DB_PORT=${{ secrets.DB_PORT }} >> ~/foodgram/.env
-          echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> ~/foodgram/.env
-          echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> ~/foodgram/.env
-          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> ~/foodgram/.env
+          touch .env
+          echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo DB_USER=${{ secrets.DB_USER }} >> .env
+          echo DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }} >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env 
+          echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
 
     - name: executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
@@ -79,5 +80,8 @@ jobs:
           id=$(docker create ${{ secrets.USER }}/foodgram)
           sudo docker cp $id:/foodgram/docker-compose.yaml ~/foodgram/docker-compose.yaml
           cd ~/foodgram
+          sudo docker-compose down
+          docker volume rm foodgram_nginx_conf
+          docker volume rm foodgram_staticfiles
           sudo docker-compose rm -v
           sudo docker-compose up -d --force-recreate

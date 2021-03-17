@@ -36,6 +36,6 @@ services:
       - mediafiles:/foodgram/media
       - nginx_conf:/etc/nginx/conf.d/
     ports:
-      - "80:80"
+      - "8888:80"
     depends_on:
       - web
