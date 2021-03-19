@@ -144,10 +144,15 @@ def create_new_recipe(request):
     if request.method == 'POST':
         for name, value in request.POST.items():
             if name.startswith('nameIngredient_'):
-                ingr_to_add = get_object_or_404(Ingredient, name=value)
+                ingr_to_add = Ingredient.objects.filter(name=value)
+                if not ingr_to_add.exists():
+                    form.add_error(
+                        None,
+                        'Выберите ингредиенты из списка существующих!')
+                    break
                 num = int(name.split('_')[1])
                 amount_value = int(request.POST.get(f'valueIngredient_{num}'))
-                ingrs.append((ingr_to_add, amount_value))
+                ingrs.append((ingr_to_add.first(), amount_value))
         if not ingrs:
             form.add_error(None, "Не указано ни одного ингредиента")
         
@@ -187,12 +192,17 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
         new_ingrs = []
         for name, value in self.request.POST.items():
             if name.startswith('nameIngredient_'):
+                ingr_to_add = Ingredient.objects.filter(name=value)
+                if not ingr_to_add.exists():
+                    form.add_error(
+                        None,
+                        'Выберите ингредиенты из списка существующих!')
+                    break
                 num = int(name.split('_')[1])
                 amount_value = int(
                     self.request.POST.get(f'valueIngredient_{num}')
                 )
-                ingr_to_add = get_object_or_404(Ingredient, name=value)
-                new_ingrs.append((ingr_to_add, amount_value))
+                new_ingrs.append((ingr_to_add.first(), amount_value))
 
         if not new_ingrs:
             form.add_error(None, "Не указано ни одного ингредиента")
@@ -211,7 +221,7 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
             self.object.save()
             form.save_m2m()
             return redirect(self.get_success_url())
-            
+
         return self.form_invalid(form)
 
 
