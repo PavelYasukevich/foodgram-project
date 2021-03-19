@@ -2,8 +2,7 @@ from django import template
 from django.contrib.auth import get_user_model
 from django.template.defaultfilters import stringfilter
 
-from recipes.models import Favorite, Purchase, Tag, Subscription
-
+from recipes.models import Favorite, Purchase, Subscription, Tag
 
 User = get_user_model()
 register = template.Library()
