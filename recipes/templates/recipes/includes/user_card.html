@@ -1,7 +1,7 @@
 {% load static %}
 <div class="card-user" data-author="{{ author.id }}">
     <div class="card-user__header">
-        <h2 class="card-user__title" ><a href="{% url 'profile' author.id %}">{{ author.username }}</a></h2>
+        <h2 class="card-user__title" >{{ author.username }}</h2>
     </div>
     <div class="card-user__body">
         <ul class="card-user__items">
@@ -9,7 +9,7 @@
                 <li class="card-user__item">
                     <div class="recipe">
                         <a href="{% url 'recipe' recipe.slug %}" class="link"><img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image"></a>
-                        <a href="{% url 'recipe' recipe.slug %}" class="recipe__title">{{ recipe.name|capfirst }}</a>
+                        <h3 class="recipe__title">{{ recipe.name|capfirst }}</h3>
                         <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
                     </div>
                 </li>
