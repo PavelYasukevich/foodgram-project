@@ -16,18 +16,18 @@ router.register(
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('profile/<int:id>/', views.ProfileView.as_view(), name='profile'),
+    path('<int:id>/profile/', views.ProfileView.as_view(), name='profile'),
     path('recipe/new/', views.create_new_recipe, name='new_recipe'),
     path(
-        'recipe/<slug:slug>/', views.RecipeDetailView.as_view(), name='recipe'
+        'recipe/<int:pk>/', views.RecipeDetailView.as_view(), name='recipe'
     ),
     path(
-        'recipe/<slug:slug>/edit/',
+        'recipe/<int:pk>/edit/',
         views.UpdateRecipeView.as_view(),
         name='edit_recipe',
     ),
     path(
-        'recipe/<slug:slug>/delete/',
+        'recipe/<int:pk>/delete/',
         views.DeleteRecipeView.as_view(),
         name='delete_recipe',
     ),

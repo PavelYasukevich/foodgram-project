@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
+
 User = get_user_model()
 
 
@@ -49,7 +50,6 @@ class Recipe(models.Model):
         help_text='Дата публикации',
     )
     slug = models.SlugField(
-        unique=True,
         max_length=100,
     )
 
@@ -65,7 +65,7 @@ class Recipe(models.Model):
         return f'{self.name}, автор: {self.author}'
 
     def get_absolute_url(self):
-        return reverse('recipe', args=[self.slug])
+        return reverse('recipe', args=[self.pk])
 
 
 class Ingredient(models.Model):

@@ -43,7 +43,7 @@
                             </p>
                         </li>
                         {% if request.user == recipe.author %}
-                            <li class="single-card__item">  <a style="margin-left: 2.5em" href="{% url 'edit_recipe' recipe.slug %}" class="single-card__text">Редактировать рецепт</a></li>
+                            <li class="single-card__item">  <a style="margin-left: 2.5em" href="{% url 'edit_recipe' recipe.id %}" class="single-card__text">Редактировать рецепт</a></li>
                         {% endif %}
                     </ul>
                 </div>

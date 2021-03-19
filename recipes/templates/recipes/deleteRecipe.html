@@ -9,7 +9,7 @@
 {% block content %}
 <main class="main container">
     <div class="custom-center-block">
-        <form method="post" action="{% url 'delete_recipe' recipe.slug %}">
+        <form method="post" action="{% url 'delete_recipe' recipe.id %}">
             {% csrf_token %}
             <h3>Уверены, что хотите удалить "{{ object.name }}"?</h3>
             <button type="submit" class="button button_style_blue">Уверен!</button>

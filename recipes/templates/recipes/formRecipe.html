@@ -13,7 +13,7 @@
         <h1 class="main__title">{% if recipe %}Редактирование{% else %}Создание{% endif %} рецепта</h1>
     </div>
     <div class="form-container">
-        <form class="form" method="post" enctype="multipart/form-data" action="{% if recipe %}{% url 'edit_recipe' recipe.slug %}{% else %}{% url 'new_recipe' %}{% endif %}">
+        <form class="form" method="post" enctype="multipart/form-data" action="{% if recipe %}{% url 'edit_recipe' recipe.id %}{% else %}{% url 'new_recipe' %}{% endif %}">
             {% csrf_token %}            
             <div class="form__group">
                 <label for="id_name" class="form__label">Название рецепта</label>
@@ -84,7 +84,7 @@
             <div class="form__footer">
                 {% if recipe %}
                     <button class="button button_style_blue">Сохранить</button>
-                    <a style="margin-left: 2.5em" href="{% url 'delete_recipe' recipe.slug %}" class="form__ingredient-link">Удалить</a>
+                    <a style="margin-left: 2.5em" href="{% url 'delete_recipe' recipe.id %}" class="form__ingredient-link">Удалить</a>
                 {% else %}
                     <button class="button button_style_blue">Создать рецепт</button>
                 {% endif %}
