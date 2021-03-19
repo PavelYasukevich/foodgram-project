@@ -180,30 +180,40 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
     template_name = 'recipes/formRecipe.html'
     queryset = Recipe.objects.all()
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.slug = slugify(self.object.name)
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
 
         new_ingrs = []
         for name, value in self.request.POST.items():
             if name.startswith('nameIngredient_'):
                 num = int(name.split('_')[1])
-                ingr_to_add = get_object_or_404(Ingredient, name=value)
                 amount_value = int(
                     self.request.POST.get(f'valueIngredient_{num}')
                 )
+                ingr_to_add = get_object_or_404(Ingredient, name=value)
                 new_ingrs.append((ingr_to_add, amount_value))
 
-        Amount.objects.filter(recipe=self.object).delete()
-        for ingr, amount_value in new_ingrs:
-            Amount.objects.create(
-                value=amount_value, recipe=self.object, ingredient=ingr
-            )
-            self.object.ingredients.add(ingr)
+        if not new_ingrs:
+            form.add_error(None, "Не указано ни одного ингредиента")
 
-        self.object.save()
-        form.save_m2m()
-        return redirect(self.get_success_url())
+        if form.is_valid():
+            self.object = form.save(commit=False)
+            self.object.slug = slugify(self.object.name)
+
+            Amount.objects.filter(recipe=self.object).delete()
+            for ingr, amount_value in new_ingrs:
+                Amount.objects.create(
+                    value=amount_value, recipe=self.object, ingredient=ingr
+                )
+                self.object.ingredients.add(ingr)
+
+            self.object.save()
+            form.save_m2m()
+            return redirect(self.get_success_url())
+            
+        return self.form_invalid(form)
+
 
 
 class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
