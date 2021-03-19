@@ -1,9 +1,20 @@
-<label for="file-upload" class="button form__file-button">{% if widget.value %}Изменить{% else %}Выбрать{% endif%} файл</label>
-<input type="file" name="image" id="file-upload" style="display:none">
-
 {% if widget.is_initial %}
     <span class="form__label">Текущее изображение:
         <a href="{{ widget.value.url }}">{{ widget.value|cut:"recipes/" }}</a>
     </span>
     <br>
 {% endif %}
+
+<input
+    type="{{ widget.type }}"
+    name="{{ widget.name }}"
+    id="file-upload"
+    {% for name, value in widget.attrs.items %}
+        {% if value is not False %}
+            {{ name }}
+            {% if value is not True %}
+                ="{{ value|stringformat:'s' }}"
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+>
