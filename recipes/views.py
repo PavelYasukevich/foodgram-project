@@ -139,7 +139,6 @@ class SubscriptionsViewSet(CreateDestroyViewset):
 @login_required
 def create_new_recipe(request):
     form = RecipeForm(request.POST or None, request.FILES or None)
-    tags = Tag.objects.all()
     if form.is_valid():
         new_recipe = form.save(commit=False)
         new_recipe.author = request.user
@@ -163,13 +162,12 @@ def create_new_recipe(request):
     return render(
         request,
         'recipes/formRecipe.html',
-        {'form': form, 'tags': tags}
+        {'form': form}
     )
 
 
 class UpdateRecipeView(LoginRequiredMixin, UpdateView):
     context_object_name = 'recipe'
-    extra_context = {'tags': Tag.objects.all()}
     form_class = RecipeForm
     template_name = 'recipes/formRecipe.html'
     queryset = Recipe.objects.all()
