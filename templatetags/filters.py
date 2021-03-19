@@ -1,5 +1,6 @@
 from django import template
 from django.contrib.auth import get_user_model
+from django.template.defaultfilters import stringfilter
 
 from recipes.models import Favorite, Purchase, Tag, Subscription
 
@@ -11,6 +12,16 @@ register = template.Library()
 @register.filter
 def addclass(field, css):
     return field.as_widget(attrs={"class": css})
+
+
+@register.filter
+@stringfilter
+def tense(value):
+    if value[-1] == '1':
+        return 'рецепт'
+    if value[-1] in '234':
+        return 'рецепта'
+    return 'рецептов'
 
 
 @register.filter

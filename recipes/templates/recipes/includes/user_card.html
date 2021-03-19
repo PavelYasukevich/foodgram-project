@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <div class="card-user" data-author="{{ author.id }}">
     <div class="card-user__header">
         <h2 class="card-user__title" >{{ author.username }}</h2>
@@ -16,9 +17,11 @@
             {% endfor %}
             <li class="card-user__item">
                 <a href="{% url 'profile' author.id %}" class="card-user__link link">
-                    {% if author.recipes.count|add:"-3" > 0 %}
-                        Еще {{ author.recipes.count|add:"-3" }} рецептов...
-                    {% endif %}
+                    {% with count=author.recipes.count|add:"-3" %}
+                        {% if count > 0 %}
+                            Еще {{ count }} {{ count|tense }}...
+                        {% endif %}
+                    {% endwith %}
                 </a>
             </li>
         </ul>
