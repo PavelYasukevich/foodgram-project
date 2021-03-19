@@ -222,7 +222,6 @@ class PurchasesView(LoginRequiredMixin, ListView):
     context_object_name = 'purchases'
     model = Recipe
     ordering = '-pub_date'
-    paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):
