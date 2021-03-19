@@ -27,8 +27,17 @@ class PurchaseAdmin(admin.ModelAdmin):
     pass
 
 
+class AmountInline(admin.TabularInline):
+    model = Amount
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
+    fields = (
+        'name', 'tags', 'cooking_time', 'author', 'description',
+        'slug', 'image', 'fav_counter', 'pub_date'
+    )
+    inlines = [AmountInline]
     list_display = (
         'id',
         'name',
@@ -42,7 +51,9 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     ordering = ('name',)
     prepopulated_fields = {'slug': ('name',)}
-    readonly_fields = ('fav_counter',)
+    readonly_fields = ('fav_counter', 'pub_date')
+
+
 
 
 @admin.register(Subscription)
