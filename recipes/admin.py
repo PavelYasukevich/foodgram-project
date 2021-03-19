@@ -54,8 +54,6 @@ class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ('fav_counter', 'pub_date')
 
 
-
-
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     pass

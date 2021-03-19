@@ -5,7 +5,6 @@ from django.contrib import admin
 from django.contrib.flatpages import views as flatpages_views
 from django.urls import include, path
 
-from recipes import views as recipe_views
 
 urlpatterns = [
     path('accounts/', include('users.urls')),

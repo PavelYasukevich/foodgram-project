@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import InvalidPage
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
@@ -11,7 +12,7 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
 from .forms import FilterForm, RecipeForm
-from .models import Amount, Ingredient, Recipe, Tag
+from .models import Amount, Ingredient, Recipe
 from .serializers import (FavoritesSerializer, IngredientSerializer,
                           PurchaseSerializer, SubscriptionsSerializer)
 
@@ -28,7 +29,7 @@ class PaginatorRedirectMixin:
         try:
             page_number = int(page)
             page = paginator.page(page_number)
-        except:
+        except (ValueError, InvalidPage):
             page_number = paginator.num_pages
             page = paginator.page(page_number)
         return (paginator, page, page.object_list, page.has_other_pages())
@@ -139,7 +140,7 @@ class SubscriptionsViewSet(CreateDestroyViewset):
 @login_required
 def create_new_recipe(request):
     form = RecipeForm(request.POST or None, request.FILES or None)
-           
+
     ingrs = []
     if request.method == 'POST':
         for name, value in request.POST.items():
@@ -155,7 +156,7 @@ def create_new_recipe(request):
                 ingrs.append((ingr_to_add.first(), amount_value))
         if not ingrs:
             form.add_error(None, "Не указано ни одного ингредиента")
-        
+
     if form.is_valid():
         new_recipe = form.save(commit=False)
         new_recipe.author = request.user
@@ -223,7 +224,6 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
             return redirect(self.get_success_url())
 
         return self.form_invalid(form)
-
 
 
 class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
