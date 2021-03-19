@@ -10,7 +10,7 @@ load_dotenv()
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -120,6 +120,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-OBJECTS_PER_PAGE = 6
+OBJECTS_PER_PAGE = 3
 
 SITE_ID = 1
