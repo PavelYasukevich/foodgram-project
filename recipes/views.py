@@ -55,8 +55,6 @@ class IndexView(PaginatorRedirectMixin, ListView):
                 queryset = queryset.filter(tags__name__contains=tag)
         return queryset
 
-    
-
 
 class RecipeDetailView(DetailView):
     context_object_name = 'recipe'
@@ -147,11 +145,7 @@ def create_new_recipe(request):
         new_recipe.author = request.user
         new_recipe.slug = slugify(new_recipe.name)
         new_recipe.save()
-
-        for tag_name, _ in Tag.CHOICES:
-            if request.POST.get(tag_name) is not None:
-                tag_to_add = get_object_or_404(Tag, name=tag_name)
-                new_recipe.tags.add(tag_to_add)
+        form.save_m2m()
 
         for name, value in request.POST.items():
             if name.startswith('nameIngredient_'):
@@ -184,13 +178,6 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
         self.object = form.save(commit=False)
         self.object.slug = slugify(self.object.name)
 
-        new_tags = []
-        for tag_name, _ in Tag.CHOICES:
-            if self.request.POST.get(tag_name) is not None:
-                tag_to_add = get_object_or_404(Tag, name=tag_name)
-                new_tags.append(tag_to_add)
-        self.object.tags.set(new_tags)
-
         new_ingrs = []
         for name, value in self.request.POST.items():
             if name.startswith('nameIngredient_'):
@@ -209,6 +196,7 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
             self.object.ingredients.add(ingr)
 
         self.object.save()
+        form.save_m2m()
         return redirect(self.get_success_url())
 
 

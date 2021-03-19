@@ -1,0 +1,18 @@
+<input 
+    type="{{ widget.type }}"
+    name="{{ widget.name }}"
+    {% if widget.value != None %} 
+        value="{{ widget.value|stringformat:'s' }}"
+    {% endif %}
+    {% for name, value in widget.attrs.items %}
+        {% if value is not False %}
+            {{ name }}
+            {% if value is not True %}
+                ="{{ value|stringformat:'s' }}"
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    class="tags__checkbox tags__checkbox_style_{% if widget.label == 'Завтрак' %}orange{% elif widget.label == 'Обед' %}green{% else %}purple{% endif %}"
+    >
+
+<label{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %} class="tags__label">{{ widget.label }}</label>

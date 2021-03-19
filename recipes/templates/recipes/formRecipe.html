@@ -15,6 +15,11 @@
     <div class="form-container">
         <form class="form" method="post" enctype="multipart/form-data" action="{% if recipe %}{% url 'edit_recipe' recipe.slug %}{% else %}{% url 'new_recipe' %}{% endif %}">
             {% csrf_token %}
+
+            {% for error in form.errors %}
+                {{ error }}
+            {% endfor %}
+            
             <div class="form__group">
                 <label for="id_name" class="form__label">Название рецепта</label>
                 <div class="form__field-group">
@@ -26,16 +31,9 @@
                 <p class="form__label">Теги</p>
                 <div class="form__field-group">
                     <div class="tags">
-                        {% for tag in tags %}
+                        {% for tag in form.tags %}
                             <div class="tags__item">
-                                <input
-                                    type="checkbox"
-                                    name="{{ tag.name }}"
-                                    id="{{ tag.id }}"
-                                    class="tags__checkbox tags__checkbox_style_{{ tag.color }}"
-                                    {% if tag in recipe.tags.all %}checked{% endif %}
-                                >
-                                <label for="{{ tag.id_for_label }}" class="tags__label">{{ tag.get_name_display }}</label>
+                                {{ tag }}
                             </div>
                         {% endfor %}
                     </div>

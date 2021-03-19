@@ -66,8 +66,8 @@ def render_recipe_edit_ingrs(recipe):
     return {'current_ingrs': current_ingrs}
 
 
-@register.inclusion_tag('recipes/aux/render_filter.html', takes_context=True)
-def render_filter(context, items):
+@register.inclusion_tag('recipes/aux/render_filter.html')
+def render_filter(items):
     data = []
     for item in items:
         name = item.data['value'].value
