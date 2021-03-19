@@ -139,6 +139,18 @@ class SubscriptionsViewSet(CreateDestroyViewset):
 @login_required
 def create_new_recipe(request):
     form = RecipeForm(request.POST or None, request.FILES or None)
+           
+    ingrs = []
+    if request.method == 'POST':
+        for name, value in request.POST.items():
+            if name.startswith('nameIngredient_'):
+                ingr_to_add = get_object_or_404(Ingredient, name=value)
+                num = int(name.split('_')[1])
+                amount_value = int(request.POST.get(f'valueIngredient_{num}'))
+                ingrs.append((ingr_to_add, amount_value))
+        if not ingrs:
+            form.add_error(None, "Не указано ни одного ингредиента")
+        
     if form.is_valid():
         new_recipe = form.save(commit=False)
         new_recipe.author = request.user
@@ -146,17 +158,13 @@ def create_new_recipe(request):
         new_recipe.save()
         form.save_m2m()
 
-        for name, value in request.POST.items():
-            if name.startswith('nameIngredient_'):
-                num = int(name.split('_')[1])
-                ingr_to_add = get_object_or_404(Ingredient, name=value)
-                amount_value = int(request.POST.get(f'valueIngredient_{num}'))
-                Amount.objects.create(
-                    value=amount_value,
-                    recipe=new_recipe,
-                    ingredient=ingr_to_add,
-                )
-                new_recipe.ingredients.add(ingr_to_add)
+        for ingr, value in ingrs:
+            Amount.objects.create(
+                value=value,
+                recipe=new_recipe,
+                ingredient=ingr,
+            )
+            new_recipe.ingredients.add(ingr)
         return redirect('index')
 
     return render(
