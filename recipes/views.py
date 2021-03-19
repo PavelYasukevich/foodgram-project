@@ -18,7 +18,23 @@ from .serializers import (FavoritesSerializer, IngredientSerializer,
 User = get_user_model()
 
 
-class IndexView(ListView):
+class PaginatorRedirectMixin:
+    def paginate_queryset(self, queryset, page_size):
+        paginator = self.get_paginator(
+            queryset, page_size, orphans=self.get_paginate_orphans(),
+            allow_empty_first_page=self.get_allow_empty())
+        page_kwarg = self.page_kwarg
+        page = self.kwargs.get(page_kwarg) or self.request.GET.get(page_kwarg) or 1
+        try:
+            page_number = int(page)
+            page = paginator.page(page_number)
+        except:
+            page_number = paginator.num_pages
+            page = paginator.page(page_number)
+        return (paginator, page, page.object_list, page.has_other_pages())
+
+
+class IndexView(PaginatorRedirectMixin, ListView):
     context_object_name = 'recipes'
     model = Recipe
     ordering = '-pub_date'
@@ -39,6 +55,8 @@ class IndexView(ListView):
                 queryset = queryset.filter(tags__name__contains=tag)
         return queryset
 
+    
+
 
 class RecipeDetailView(DetailView):
     context_object_name = 'recipe'
@@ -46,7 +64,7 @@ class RecipeDetailView(DetailView):
     template_name = 'recipes/singlePage.html'
 
 
-class ProfileView(ListView):
+class ProfileView(PaginatorRedirectMixin, ListView):
     context_object_name = 'author_recipes'
     model = Recipe
     ordering = '-pub_date'
@@ -69,7 +87,7 @@ class ProfileView(ListView):
         return queryset
 
 
-class SubscriptionsView(LoginRequiredMixin, ListView):
+class SubscriptionsView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     context_object_name = 'authors'
     model = User
     paginate_by = settings.OBJECTS_PER_PAGE
@@ -194,7 +212,7 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
         return redirect(self.get_success_url())
 
 
-class FavoritesView(LoginRequiredMixin, ListView):
+class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     context_object_name = 'favorites'
     model = Recipe
     ordering = '-pub_date'
