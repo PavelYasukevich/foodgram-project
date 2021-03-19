@@ -8,8 +8,6 @@ from django.urls import include, path
 from recipes import views as recipe_views
 
 urlpatterns = [
-    path("404", recipe_views.page_not_found),
-    path("500", recipe_views.server_error),
     path('accounts/', include('users.urls')),
     path('admin/', admin.site.urls),
     path('about/', include('django.contrib.flatpages.urls')),

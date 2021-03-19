@@ -1,8 +1,7 @@
 import os
-
-from dotenv import load_dotenv
 from pathlib import Path
 
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,7 +55,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
             'libraries': {
-                'custom_filters': 'templatetags.filters',
+                'custom_filters': 'recipes.templatetags.filters',
             },
         },
     },
