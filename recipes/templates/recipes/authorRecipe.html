@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="main__header">
-        <h1 class="main__title">{{ author.username }}</h1>
+        <h1 class="main__title"><a href="{% url 'profile' author.id %}" class="link" style="color: black">{{ author.username }}</a></h1>
         {% include 'recipes/includes/filter_form.html' %}
     </div>
 
