@@ -13,8 +13,12 @@ from rest_framework.response import Response
 
 from .forms import FilterForm, RecipeForm
 from .models import Amount, Ingredient, Recipe
-from .serializers import (FavoritesSerializer, IngredientSerializer,
-                          PurchaseSerializer, SubscriptionsSerializer)
+from .serializers import (
+    FavoritesSerializer,
+    IngredientSerializer,
+    PurchaseSerializer,
+    SubscriptionsSerializer,
+)
 
 User = get_user_model()
 
@@ -22,10 +26,17 @@ User = get_user_model()
 class PaginatorRedirectMixin:
     def paginate_queryset(self, queryset, page_size):
         paginator = self.get_paginator(
-            queryset, page_size, orphans=self.get_paginate_orphans(),
-            allow_empty_first_page=self.get_allow_empty())
+            queryset,
+            page_size,
+            orphans=self.get_paginate_orphans(),
+            allow_empty_first_page=self.get_allow_empty(),
+        )
         page_kwarg = self.page_kwarg
-        page = self.kwargs.get(page_kwarg) or self.request.GET.get(page_kwarg) or 1
+        page = (
+            self.kwargs.get(page_kwarg)
+            or self.request.GET.get(page_kwarg)
+            or 1
+        )
         try:
             page_number = int(page)
             page = paginator.page(page_number)
@@ -101,7 +112,6 @@ class SubscriptionsView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
 class CreateDestroyViewset(
     viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.DestroyModelMixin
 ):
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
@@ -148,14 +158,14 @@ def create_new_recipe(request):
                 ingr_to_add = Ingredient.objects.filter(name=value)
                 if not ingr_to_add.exists():
                     form.add_error(
-                        None,
-                        'Выберите ингредиенты из списка существующих!')
+                        None, 'Выберите ингредиенты из списка существующих!'
+                    )
                     break
                 num = int(name.split('_')[1])
                 amount_value = int(request.POST.get(f'valueIngredient_{num}'))
                 ingrs.append((ingr_to_add.first(), amount_value))
         if not ingrs:
-            form.add_error(None, "Не указано ни одного ингредиента")
+            form.add_error(None, 'Не указано ни одного ингредиента')
 
     if form.is_valid():
         new_recipe = form.save(commit=False)
@@ -173,11 +183,7 @@ def create_new_recipe(request):
             new_recipe.ingredients.add(ingr)
         return redirect('index')
 
-    return render(
-        request,
-        'recipes/formRecipe.html',
-        {'form': form}
-    )
+    return render(request, 'recipes/formRecipe.html', {'form': form})
 
 
 class UpdateRecipeView(LoginRequiredMixin, UpdateView):
@@ -196,8 +202,8 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
                 ingr_to_add = Ingredient.objects.filter(name=value)
                 if not ingr_to_add.exists():
                     form.add_error(
-                        None,
-                        'Выберите ингредиенты из списка существующих!')
+                        None, 'Выберите ингредиенты из списка существующих!'
+                    )
                     break
                 num = int(name.split('_')[1])
                 amount_value = int(
@@ -206,7 +212,7 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
                 new_ingrs.append((ingr_to_add.first(), amount_value))
 
         if not new_ingrs:
-            form.add_error(None, "Не указано ни одного ингредиента")
+            form.add_error(None, 'Не указано ни одного ингредиента')
 
         if form.is_valid():
             self.object = form.save(commit=False)
@@ -274,14 +280,11 @@ class DownloadShoppingList(LoginRequiredMixin, PDFView):
             ingredients = purchase.recipe.ingredients.all()
             for ingr in ingredients:
                 amount = Amount.objects.get(
-                    recipe=purchase.recipe,
-                    ingredient=ingr
+                    recipe=purchase.recipe, ingredient=ingr
                 ).value
                 purchase_list[ingr] = purchase_list.get(ingr, 0) + amount
 
-        kwargs.update(
-            {'purchase_list': purchase_list}
-        )
+        kwargs.update({'purchase_list': purchase_list})
         return kwargs
 
 
@@ -362,8 +365,8 @@ class PurchasesViewSet(CreateDestroyViewset):
 
 
 def page_not_found(request, exception):
-    return render(request, "misc/404.html", {"path": request.path}, status=404)
+    return render(request, 'misc/404.html', {'path': request.path}, status=404)
 
 
 def server_error(request):
-    return render(request, "misc/500.html", status=500)
+    return render(request, 'misc/500.html', status=500)
