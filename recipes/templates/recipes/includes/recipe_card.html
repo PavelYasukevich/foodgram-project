@@ -17,15 +17,7 @@
     </div>
     <div class="card__footer">
         {% if user.is_authenticated %}
-
             {% include 'recipes/includes/purchase.html' with recipe=recipe user=user %}
-        
-            <!-- {% if recipe|in_purchases:user %}
-                <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span>Рецепт добавлен</button>
-            {% else %}
-                <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
-            {% endif %} -->
-            
             {% include 'recipes/includes/fav_star.html' %}
         {% endif %}
     </div>
