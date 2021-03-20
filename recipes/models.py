@@ -210,7 +210,7 @@ class Subscription(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user.username} subscribed on {self.author.username}'
+        return f'{self.user} subscribed on {self.author}'
 
 
 class Favorite(models.Model):
