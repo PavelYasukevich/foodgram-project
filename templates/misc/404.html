@@ -7,15 +7,13 @@
 {% endblock %}
 
 {% block content %}
-    <main class="main container">
-        <div class="main__header">
-            <h1 class="main__title">Ошибка 404</h1>
-        </div>
-        <div class="custom-center-block">
-            <p class="custom-text-block">Страница <code>{{ path }}</code> не найдена</p>
-        </div>
-        <div class="custom-button-block">
-            <button class="button button_style_blue"><a href="{% url 'index' %}">Вернуться на главную</a></button>
-        </div>
-    </main>
+    <div class="main__header">
+        <h1 class="main__title">Ошибка 404</h1>
+    </div>
+    <div class="custom-center-block">
+        <p class="custom-text-block">Страница <code>{{ path }}</code> не найдена</p>
+    </div>
+    <div class="custom-button-block">
+        <button class="button button_style_blue"><a href="{% url 'index' %}">Вернуться на главную</a></button>
+    </div>
 {% endblock %}

@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block content %}
-<main class="main container">
     <div class="custom-center-block">
         <form method="post" action="{% url 'delete_recipe' recipe.id %}">
             {% csrf_token %}
@@ -16,5 +15,4 @@
             <a href="{% url 'index' %}"><button class="button button_style_blue">Нет, вернуться на главную</button></a>
         </form>
     </div>
-</main>
 {% endblock %}

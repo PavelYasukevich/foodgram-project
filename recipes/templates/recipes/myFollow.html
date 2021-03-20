@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block content %}
-<main class="main container">
     <div class="main__header">
         <h1 class="main__title">Мои подписки</h1>
     </div>
@@ -21,10 +20,6 @@
         <h3 class="single-card__section-text">Вы не подписаны ни на одного автора.</h3>
     {% endif %}
 
-    {% if page_obj.has_other_pages %}
-        {% include "includes/paginator.html" with page=page_obj paginator=paginator %}
-    {% endif %}
-</main>
 {% endblock %}
 
 {% block scripts %}

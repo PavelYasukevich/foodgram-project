@@ -8,35 +8,20 @@
 {% endblock %}
 
 {% block content %}
-    <main class="main container">
-        <div class="main__header">
-            <h1 class="main__title">{{ author.username }}</h1>
-            <form method="get" id="formID" onchange="document.getElementById('formID').submit()">
-                {% render_filter filterform.tags %}
-            </form>
-        </div>
+    <div class="main__header">
+        <h1 class="main__title">{{ author.username }}</h1>
+        {% include 'recipes/includes/filter_form.html' %}
+    </div>
 
-        {% if user.is_authenticated and user != author %}
-            {% if author|in_subscriptions:user %}
-                <div class="author-subscribe" data-author="{{ author.id }}">
-                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></p>
-                </div>
-            {% else%}
-                <div class="author-subscribe" data-author="{{ author.id }}">
-                    <p style="padding: 0 0 2em 0;"><button class="button button_style_blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
-                </div>
-            {% endif %}
-        {% endif %}
+    {% if user.is_authenticated and user != author %}
+        {% include 'recipes/includes/sub.html' with author=author user=user tag='p' style='padding: 0 0 2em 0;' %}
+    {% endif %}
 
-        <div class="card-list">
-            {% for recipe in author_recipes %}
-                {% include "recipes/includes/recipe_card.html" with recipe=recipe %}
-            {% endfor %}
-        </div>
-        {% if page_obj.has_other_pages %}
-            {% include "includes/paginator.html" with page=page_obj paginator=paginator %}
-        {% endif %}
-    </main>
+    <div class="card-list">
+        {% for recipe in author_recipes %}
+            {% include "recipes/includes/recipe_card.html" with recipe=recipe %}
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block scripts %}

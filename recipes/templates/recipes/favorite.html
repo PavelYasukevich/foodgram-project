@@ -8,27 +8,20 @@
 {% endblock %}
 
 {% block content %}
-    <main class="main container">
-        <div class="main__header">
-            <h1 class="main__title">Избранное</h1>
-            <form method="get" id="formID" onchange="document.getElementById('formID').submit()">
-                {% render_filter filterform.tags %}
-            </form>
-        </div>
-        <div class="card-list">
-            {% for recipe in favorites %}
-                {% include 'recipes/includes/recipe_card.html' with recipe=recipe %}
-            {% endfor %}
-        </div>
+    <div class="main__header">
+        <h1 class="main__title">Избранное</h1>
+        {% include 'recipes/includes/filter_form.html' %}
+    </div>
+    <div class="card-list">
+        {% for recipe in favorites %}
+            {% include 'recipes/includes/recipe_card.html' with recipe=recipe %}
+        {% endfor %}
+    </div>
 
-        {% if not favorites %}
-            <h3 class="single-card__section-text">Ваш список избранных рецептов пока пуст.</h3>
-        {% endif %}
+    {% if not favorites %}
+        <h3 class="single-card__section-text">Ваш список избранных рецептов пока пуст.</h3>
+    {% endif %}
 
-        {% if page_obj.has_other_pages %}
-            {% include "includes/paginator.html" with page=page_obj paginator=paginator req_args=req_args %}
-        {% endif %}
-    </main>
 {% endblock %}
 
 {% block scripts %}
