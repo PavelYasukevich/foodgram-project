@@ -2,7 +2,9 @@
 {% load custom_filters %}
 <div class="card-user" data-author="{{ author.id }}">
     <div class="card-user__header">
-        <a href="{% url 'profile' author.id %}" class="link"><h2 class="card-user__title" >{{ author }}</h2></a>
+        <h2 class="card-user__title">
+            {% include 'recipes/includes/recipe_author_link.html' with author=author %}
+        </h2>
     </div>
     <div class="card-user__body">
         <ul class="card-user__items">
