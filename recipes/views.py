@@ -1,21 +1,52 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import InvalidPage
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 from django_pdfkit import PDFView
 from pytils.translit import slugify
 
+from . import services
 from .forms import FilterForm, RecipeForm
-from .models import Amount, Ingredient, Recipe
+from .models import Favorite, Purchase, Recipe
 
 User = get_user_model()
 
 
+class RecipePostMixin:
+    """Содержит общую логику обработки создания и редактирования рецепта."""
+    def post(self, request, *args, **kwargs):
+        ingrs, form = services.get_ingr_list_from_request_data(
+            data=self.request.POST,
+            form=self.get_form(),
+        )
+        if form.is_valid():
+            return self.form_valid(form, ingrs)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form, ingrs):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.slug = slugify(self.object.name)
+        self.object.save()
+        services.create_amount_objects_and_add_ingrs_to_recipe(
+            recipe=self.object,
+            ingrs=ingrs,
+        )
+        form.save_m2m()
+        return redirect(self.get_success_url())
+
+
 class PaginatorRedirectMixin:
+    """
+    Возвращает последнюю страницу, если номер запрошенной страницы
+    превышает общее количество страниц пагинатора, или введены некорректные
+    данные в гет-параметр вручную.
+    """
     def paginate_queryset(self, queryset, page_size):
         paginator = self.get_paginator(
             queryset,
@@ -39,8 +70,8 @@ class PaginatorRedirectMixin:
 
 
 class IndexView(PaginatorRedirectMixin, ListView):
+    """Главная страница со списком всех рецептов сайта."""
     context_object_name = 'recipes'
-    model = Recipe
     ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/index.html'
@@ -52,23 +83,22 @@ class IndexView(PaginatorRedirectMixin, ListView):
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        tags = self.request.GET.getlist('tags')
-        if tags:
-            for tag in tags:
-                queryset = queryset.filter(tags__name__contains=tag)
+        queryset = services.get_recipes_queryset_filtered_by_tags(
+            tags=self.request.GET.getlist('tags'),
+        )
         return queryset
 
 
 class RecipeDetailView(DetailView):
+    """Страница отдельного рецепта."""
     context_object_name = 'recipe'
     model = Recipe
     template_name = 'recipes/singlePage.html'
 
 
 class ProfileView(PaginatorRedirectMixin, ListView):
+    """Страница рецептов отдельного автора."""
     context_object_name = 'author_recipes'
-    model = Recipe
     ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/authorRecipe.html'
@@ -80,67 +110,39 @@ class ProfileView(PaginatorRedirectMixin, ListView):
         return context
 
     def get_queryset(self):
-        user = get_object_or_404(User, id=self.kwargs.get('id'))
-        queryset = super().get_queryset().filter(author=user)
-        tags = self.request.GET.getlist('tags')
-        if tags:
-            for tag in tags:
-                queryset = queryset.filter(tags__name__contains=tag)
+        queryset = services.get_recipes_queryset_filtered_by_tags(
+            user_id=self.kwargs.get('id'),
+            tags=self.request.GET.getlist('tags'),
+        )
         return queryset
 
 
 class SubscriptionsView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
+    """Список авторов, на которых подписан пользователь."""
     context_object_name = 'authors'
-    model = User
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/myFollow.html'
 
     def get_queryset(self):
-        user = get_object_or_404(User, id=self.request.user.id)
-        queryset = super().get_queryset().filter(subscribers__user__id=user.id)
+        queryset = services.get_user_subscriptions_list(
+            user_id=self.request.user.id
+        )
         return queryset
 
 
-@login_required
-def create_new_recipe(request):
-    form = RecipeForm(request.POST or None, request.FILES or None)
+class CreateRecipeView(LoginRequiredMixin, RecipePostMixin, CreateView):
+    """Страница создания нового рецепта."""
+    context_object_name = 'recipe'
+    form_class = RecipeForm
+    template_name = 'recipes/formRecipe.html'
 
-    ingrs = []
-    if request.method == 'POST':
-        for name, value in request.POST.items():
-            if name.startswith('nameIngredient_'):
-                ingr_to_add = Ingredient.objects.filter(name=value)
-                if not ingr_to_add.exists():
-                    form.add_error(
-                        None, 'Выберите ингредиенты из списка существующих!'
-                    )
-                    break
-                num = int(name.split('_')[1])
-                amount_value = int(request.POST.get(f'valueIngredient_{num}'))
-                ingrs.append((ingr_to_add.first(), amount_value))
-        if not ingrs:
-            form.add_error(None, 'Не указано ни одного ингредиента')
-
-    if form.is_valid():
-        new_recipe = form.save(commit=False)
-        new_recipe.author = request.user
-        new_recipe.slug = slugify(new_recipe.name)
-        new_recipe.save()
-        form.save_m2m()
-
-        for ingr, value in ingrs:
-            Amount.objects.create(
-                value=value,
-                recipe=new_recipe,
-                ingredient=ingr,
-            )
-            new_recipe.ingredients.add(ingr)
-        return redirect('index')
-
-    return render(request, 'recipes/formRecipe.html', {'form': form})
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        return super().post(request, *args, **kwargs)
 
 
-class UpdateRecipeView(LoginRequiredMixin, UpdateView):
+class UpdateRecipeView(LoginRequiredMixin, RecipePostMixin, UpdateView):
+    """Страница редактирования рецепта автором."""
     context_object_name = 'recipe'
     form_class = RecipeForm
     template_name = 'recipes/formRecipe.html'
@@ -148,47 +150,12 @@ class UpdateRecipeView(LoginRequiredMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        form = self.get_form()
-
-        new_ingrs = []
-        for name, value in self.request.POST.items():
-            if name.startswith('nameIngredient_'):
-                ingr_to_add = Ingredient.objects.filter(name=value)
-                if not ingr_to_add.exists():
-                    form.add_error(
-                        None, 'Выберите ингредиенты из списка существующих!'
-                    )
-                    break
-                num = int(name.split('_')[1])
-                amount_value = int(
-                    self.request.POST.get(f'valueIngredient_{num}')
-                )
-                new_ingrs.append((ingr_to_add.first(), amount_value))
-
-        if not new_ingrs:
-            form.add_error(None, 'Не указано ни одного ингредиента')
-
-        if form.is_valid():
-            self.object = form.save(commit=False)
-            self.object.slug = slugify(self.object.name)
-
-            Amount.objects.filter(recipe=self.object).delete()
-            for ingr, amount_value in new_ingrs:
-                Amount.objects.create(
-                    value=amount_value, recipe=self.object, ingredient=ingr
-                )
-                self.object.ingredients.add(ingr)
-
-            self.object.save()
-            form.save_m2m()
-            return redirect(self.get_success_url())
-
-        return self.form_invalid(form)
+        return super().post(request, *args, **kwargs)
 
 
 class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
+    """Список избранных рецептов пользователя."""
     context_object_name = 'favorites'
-    model = Recipe
     ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/favorite.html'
@@ -200,57 +167,53 @@ class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
         return context
 
     def get_queryset(self):
-        user = get_object_or_404(User, id=self.request.user.id)
-        user_favs = user.favorites.values_list('recipe__id', flat=True)
-        queryset = super().get_queryset().filter(id__in=user_favs)
-        tags = self.request.GET.getlist('tags')
-        if tags:
-            for tag in tags:
-                queryset = queryset.filter(tags__name__contains=tag)
+        queryset = services.get_recipes_queryset_filtered_by_tags(
+            user_id=self.request.user.id,
+            model=Favorite,
+            tags=self.request.GET.getlist('tags'),
+        )
         return queryset
 
 
 class PurchasesView(LoginRequiredMixin, ListView):
+    """Список покупок пользователя."""
     context_object_name = 'purchases'
-    model = Recipe
     ordering = '-pub_date'
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):
-        user = get_object_or_404(User, id=self.request.user.id)
-        user_purchases = user.purchases.values_list('recipe__id', flat=True)
-        queryset = super().get_queryset().filter(id__in=user_purchases)
+        queryset = services.get_recipes_queryset_filtered_by_tags(
+            user_id=self.request.user.id,
+            model=Purchase,
+        )
         return queryset
 
 
 class DownloadShoppingList(LoginRequiredMixin, PDFView):
+    """Загрузка сформированного файла со списком покупок пользователя."""
     template_name = 'recipes/aux/shopping_list.html'
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        purchase_list = {}
-        purchases = self.request.user.purchases.select_related('recipe').all()
-        for purchase in purchases:
-            ingredients = purchase.recipe.ingredients.all()
-            for ingr in ingredients:
-                amount = Amount.objects.get(
-                    recipe=purchase.recipe, ingredient=ingr
-                ).value
-                purchase_list[ingr] = purchase_list.get(ingr, 0) + amount
-
+        purchase_list = services.make_purchase_list_for_download(
+            user=self.request.user
+        )
         kwargs.update({'purchase_list': purchase_list})
         return kwargs
 
 
 class DeleteRecipeView(LoginRequiredMixin, DeleteView):
+    """Страница подтверждения удаления рецепта автором."""
     model = Recipe
     template_name = 'recipes/deleteRecipe.html'
     success_url = reverse_lazy('index')
 
 
 def page_not_found(request, exception):
+    """Вернуть страницу ошибки 404."""
     return render(request, 'misc/404.html', {'path': request.path}, status=404)
 
 
 def server_error(request):
+    """Вернуть страницу ошибки 500."""
     return render(request, 'misc/500.html', status=500)
