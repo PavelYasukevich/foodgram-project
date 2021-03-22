@@ -13,7 +13,7 @@
                     <div class="recipe">
                         <a href="{% url 'recipe' recipe.id %}" class="link"><img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image"></a>
                         <h3 class="recipe__title">{{ recipe.name|capfirst }}</h3>
-                        <p class="recipe__text"><span class="icon-time"></span>{{ recipe.cooking_time }} мин.</p>
+                        <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
                     </div>
                 </li>
             {% endfor %}
