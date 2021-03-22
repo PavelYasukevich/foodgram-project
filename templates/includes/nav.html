@@ -3,9 +3,9 @@
     <nav class="nav">
         <div class="nav__container container">
             <ul class="nav__items list">
-                <li class="nav__item {% if request.resolver_match.url_name == 'index' %}nav__item_active{% endif %}"><a href="{% url 'index'%}" class="nav__link link">Рецепты</a></li>
-                {% if user.is_authenticated %}
-                    {% with page=request.resolver_match.url_name %}
+                {% with page=request.resolver_match.url_name %}
+                    <li class="nav__item {% if page == 'index' %}nav__item_active{% endif %}"><a href="{% url 'index'%}" class="nav__link link">Рецепты</a></li>
+                    {% if user.is_authenticated %}
                         <li class="nav__item {% if page == 'subscriptions' %}nav__item_active{% endif %}"><a href="{% url 'subscriptions' %}" class="nav__link link">Мои подписки</a></li>
                         <li class="nav__item {% if page == 'new_recipe' %}nav__item_active{% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
                         <li class="nav__item {% if page == 'favorites' %}nav__item_active{% endif %}"><a href="{% url 'favorites' %}" class="nav__link link">Избранное</a></li>
@@ -14,8 +14,8 @@
                                 <span class="badge badge_style_blue nav__badge" id="counter" {% if not user.purchases.count %}style="display:none"{% endif %}>{{ user.purchases.count }}</span>
                             </a>
                         </li>
-                    {% endwith %}
-                {% endif %}
+                    {% endif %}
+                {% endwith %}
             </ul>
             <ul class="nav__items list">
                 {% if user.is_authenticated %}
