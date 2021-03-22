@@ -36,6 +36,7 @@ class FavoritesViewSet(CreateDestroyViewset):
             data={
                 'user': request.user.id,
                 'recipe': request.data['id'],
+                'success': True,
             }
         )
         serializer.is_valid(raise_exception=True)
@@ -47,7 +48,6 @@ class FavoritesViewSet(CreateDestroyViewset):
 
 
 class IngredientsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
-
     serializer_class = IngredientSerializer
 
     def get_queryset(self):
@@ -77,6 +77,8 @@ class PurchasesViewSet(CreateDestroyViewset):
             data={
                 'user': request.user.id,
                 'recipe': request.data['id'],
+                'success': True,
+
             }
         )
         serializer.is_valid(raise_exception=True)
@@ -106,6 +108,7 @@ class SubscriptionsViewSet(CreateDestroyViewset):
             data={
                 'user': request.user.id,
                 'author': request.data['id'],
+                'success': True,
             }
         )
         serializer.is_valid(raise_exception=True)

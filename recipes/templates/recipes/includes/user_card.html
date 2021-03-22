@@ -21,7 +21,7 @@
                 <a href="{% url 'profile' author.id %}" class="card-user__link link">
                     {% with count=author.recipes.count|add:"-3" %}
                         {% if count > 0 %}
-                            Еще {{ count }} {{ count|tense }}...
+                            Еще {{ count }} {{ 'рецепт'|tense:count }}...
                         {% endif %}
                     {% endwith %}
                 </a>

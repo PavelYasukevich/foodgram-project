@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import InvalidPage
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
@@ -18,6 +19,7 @@ User = get_user_model()
 
 class RecipePostMixin:
     """Содержит общую логику обработки создания и редактирования рецепта."""
+
     def post(self, request, *args, **kwargs):
         ingrs, form = services.get_ingr_list_from_request_data(
             data=self.request.POST,
@@ -43,10 +45,13 @@ class RecipePostMixin:
 
 class PaginatorRedirectMixin:
     """
+    Редирект на последнюю существущую страницу.
+
     Возвращает последнюю страницу, если номер запрошенной страницы
     превышает общее количество страниц пагинатора, или введены некорректные
     данные в гет-параметр вручную.
     """
+
     def paginate_queryset(self, queryset, page_size):
         paginator = self.get_paginator(
             queryset,
@@ -71,6 +76,7 @@ class PaginatorRedirectMixin:
 
 class IndexView(PaginatorRedirectMixin, ListView):
     """Главная страница со списком всех рецептов сайта."""
+
     context_object_name = 'recipes'
     ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
@@ -91,6 +97,7 @@ class IndexView(PaginatorRedirectMixin, ListView):
 
 class RecipeDetailView(DetailView):
     """Страница отдельного рецепта."""
+
     context_object_name = 'recipe'
     model = Recipe
     template_name = 'recipes/singlePage.html'
@@ -98,6 +105,7 @@ class RecipeDetailView(DetailView):
 
 class ProfileView(PaginatorRedirectMixin, ListView):
     """Страница рецептов отдельного автора."""
+
     context_object_name = 'author_recipes'
     ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
@@ -119,6 +127,7 @@ class ProfileView(PaginatorRedirectMixin, ListView):
 
 class SubscriptionsView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     """Список авторов, на которых подписан пользователь."""
+
     context_object_name = 'authors'
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/myFollow.html'
@@ -132,6 +141,7 @@ class SubscriptionsView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
 
 class CreateRecipeView(LoginRequiredMixin, RecipePostMixin, CreateView):
     """Страница создания нового рецепта."""
+
     context_object_name = 'recipe'
     form_class = RecipeForm
     template_name = 'recipes/formRecipe.html'
@@ -143,6 +153,7 @@ class CreateRecipeView(LoginRequiredMixin, RecipePostMixin, CreateView):
 
 class UpdateRecipeView(LoginRequiredMixin, RecipePostMixin, UpdateView):
     """Страница редактирования рецепта автором."""
+
     context_object_name = 'recipe'
     form_class = RecipeForm
     template_name = 'recipes/formRecipe.html'
@@ -155,6 +166,7 @@ class UpdateRecipeView(LoginRequiredMixin, RecipePostMixin, UpdateView):
 
 class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     """Список избранных рецептов пользователя."""
+
     context_object_name = 'favorites'
     ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
@@ -177,6 +189,7 @@ class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
 
 class PurchasesView(LoginRequiredMixin, ListView):
     """Список покупок пользователя."""
+
     context_object_name = 'purchases'
     ordering = '-pub_date'
     template_name = 'recipes/purchaseList.html'
@@ -191,6 +204,7 @@ class PurchasesView(LoginRequiredMixin, ListView):
 
 class DownloadShoppingList(LoginRequiredMixin, PDFView):
     """Загрузка сформированного файла со списком покупок пользователя."""
+
     template_name = 'recipes/aux/shopping_list.html'
 
     def get_context_data(self, **kwargs):
@@ -204,6 +218,7 @@ class DownloadShoppingList(LoginRequiredMixin, PDFView):
 
 class DeleteRecipeView(LoginRequiredMixin, DeleteView):
     """Страница подтверждения удаления рецепта автором."""
+
     model = Recipe
     template_name = 'recipes/deleteRecipe.html'
     success_url = reverse_lazy('index')

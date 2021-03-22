@@ -4,6 +4,10 @@ from django.urls import reverse
 
 User = get_user_model()
 
+class RecipeQuerySet(models.QuerySet):
+    def authors(self):
+        return self.filter(role='A')
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -51,6 +55,9 @@ class Recipe(models.Model):
     slug = models.SlugField(
         max_length=100,
     )
+
+    objects = models.Manager()
+    myrecipes = RecipeQuerySet.as_manager()
 
     def added_in_favorites(self):
         return self.favorites.all().count()

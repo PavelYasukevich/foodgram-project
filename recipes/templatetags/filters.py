@@ -13,29 +13,35 @@ def addclass(field, css):
     return field.as_widget(attrs={"class": css})
 
 
+TENSES = {
+    1: '',
+    2: 'а',
+    3: 'а',
+    4: 'а',
+}
+
 @register.filter
-@stringfilter
-def tense(value):
-    if value[-1] == '1':
-        return 'рецепт'
-    if value[-1] in '234':
-        return 'рецепта'
-    return 'рецептов'
+def tense(text, count):
+    end = int(count) % 100
+    end = end if end in (11, 12, 13, 14) else end % 10
+    end = TENSES.get(end, "ов")
+    return f'{text}{end}'
 
 
 @register.filter
 def in_subscriptions(author, user):
     return Subscription.objects.filter(author=author, user=user).exists()
-
+#   return user in author.subscribers
 
 @register.filter
 def in_favorites(recipe, user):
     return Favorite.objects.filter(recipe=recipe, user=user).exists()
-
+#   return user.id in recipe.favored_by
 
 @register.filter
 def in_purchases(recipe, user):
     return Purchase.objects.filter(recipe=recipe, user=user).exists()
+#   return user.id in recipe.purchased_by
 
 
 @register.simple_tag

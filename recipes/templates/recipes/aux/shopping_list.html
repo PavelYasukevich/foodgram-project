@@ -33,10 +33,10 @@
             <hr>
 
             <ul class="shopping-list">
-                {% for ingr, amount in purchase_list.items %}
+                {% for ingr, meas_unit, amount in purchase_list %}
                     <li class="shopping-list__item">
                         <div class="recipe recipe_reverse">
-                            <h3 class="recipe__title">{{ ingr.name|capfirst }} ({{ ingr.measurement_unit }}) — {{ amount }}</h3>
+                            <h3 class="recipe__title">{{ ingr|capfirst }} ({{ meas_unit }}) — {{ amount }}</h3>
                         </div>
                     </li>
                 {% endfor %}
