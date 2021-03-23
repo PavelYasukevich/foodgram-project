@@ -44,15 +44,3 @@ def in_favorites(recipe, user):
 def in_purchases(recipe, user):
     return Purchase.objects.filter(recipe=recipe, user=user).exists()
 #   return user.id in recipe.purchased_by
-
-
-@register.inclusion_tag(
-    'recipes/aux/render_edit_recipe_ingrs.html',
-    name='edit_recipe_ingrs'
-)
-@register.inclusion_tag(
-    'recipes/aux/render_single_recipe_ingrs.html',
-    name='single_recipe_ingrs'
-)
-def render_recipe_edit_ingrs(recipe_ingredients):
-    return {'current_ingrs': recipe_ingredients}
