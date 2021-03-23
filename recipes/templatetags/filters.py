@@ -47,10 +47,10 @@ def in_purchases(recipe, user):
 
 
 @register.simple_tag
-def add_filter(req_args):
+def add_filter(request_args):
     output = ''
-    if req_args:
-        for arg in req_args:
+    if request_args:
+        for arg in request_args:
             output = f'{output}&tags={arg}'
     return output
 

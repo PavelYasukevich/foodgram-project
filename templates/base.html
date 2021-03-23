@@ -22,7 +22,7 @@
 
             {% if is_paginated %}
                 {% if page_obj.has_other_pages %}
-                    {% include "includes/paginator.html" with page=page_obj paginator=paginator req_args=req_args %}
+                    {% include "includes/paginator.html" with page=page_obj paginator=paginator %}
                 {% endif %}
             {% endif %}
         </main>

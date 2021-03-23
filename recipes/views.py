@@ -84,7 +84,6 @@ class IndexView(PaginatorRedirectMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterform'] = FilterForm(self.request.GET)
-        context['req_args'] = self.request.GET.getlist('tags')
         return context
 
     def get_queryset(self):
@@ -174,7 +173,6 @@ class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterform'] = FilterForm(self.request.GET)
-        context['req_args'] = self.request.GET.getlist('tags')
         return context
 
     def get_queryset(self):
