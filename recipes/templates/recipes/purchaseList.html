@@ -6,10 +6,11 @@
     <link rel="stylesheet" href="{% static 'pages/shopList.css' %}">
 {% endblock %}
 
+{% block main_header %}
+    <h1 class="main__title">Список покупок</h1>
+{% endblock %}
+
 {% block content %}
-    <div class="main__header">
-        <h1 class="main__title">Список покупок</h1>
-    </div>
     <div class="card-list card-list_column">
         <ul class="shopping-list">
             {% for recipe in purchases %}

@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="{% static 'pages/form.css' %}">
 {% endblock %}
 
+{% block main_header %}
+    <h1 class="main__title">{% if recipe %}Редактирование{% else %}Создание{% endif %} рецепта</h1>
+{% endblock %}
+
 {% block content %}
-    <div class="main__header">
-        <h1 class="main__title">{% if recipe %}Редактирование{% else %}Создание{% endif %} рецепта</h1>
-    </div>
     <div class="form-container">
         <form class="form" method="post" enctype="multipart/form-data" action="{% if recipe %}{% url 'edit_recipe' recipe.id %}{% else %}{% url 'new_recipe' %}{% endif %}">
             {% csrf_token %}            

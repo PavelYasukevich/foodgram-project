@@ -7,14 +7,15 @@
     <link rel="stylesheet" href="{% static 'pages/index.css' %}">
 {% endblock %}
 
-{% block content %}
-    <div class="main__header">
+
+{% block main_header %}
         <h1 class="main__title">
             {% include 'recipes/includes/recipe_author_link.html' with author=author %}
         </h1>
         {% include 'recipes/includes/filter_form.html' %}
-    </div>
+{% endblock %}
 
+{% block content %}
     {% if user.is_authenticated and user != author %}
         {% include 'recipes/includes/sub.html' with author=author user=user tag='p' style='padding: 0 0 2em 0;' %}
     {% endif %}

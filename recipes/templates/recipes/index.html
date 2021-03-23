@@ -7,11 +7,12 @@
     <link rel="stylesheet" href="{% static 'pages/index.css' %}">
 {% endblock %}
 
+{% block main_header %}
+    <h1 class="main__title">Рецепты</h1>
+    {% include 'recipes/includes/filter_form.html' %}
+{% endblock %}
+
 {% block content %}
-    <div class="main__header">
-        <h1 class="main__title">Рецепты</h1>
-        {% include 'recipes/includes/filter_form.html' %}
-    </div>
     <div class="card-list">
         {% for recipe in recipes %}
             {% include 'recipes/includes/recipe_card.html' with recipe=recipe %}
