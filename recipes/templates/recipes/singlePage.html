@@ -47,7 +47,7 @@
                 {% endif %}
             </ul>
             <div class="single-card__section">
-                <h3 class="single-card__section-title">Ингридиенты:</h3>
+                <h3 class="single-card__section-title">Ингредиенты:</h3>
 
                 <div class="single-card__items single-card__items_column">
                     {% single_recipe_ingrs recipe %}
@@ -55,7 +55,7 @@
             </div>
             <div class="single-card__section">
                 <h3 class="single-card__section-title">Описание:</h3>
-                <p class="single-card__section-text">{{ recipe.description }}</p>
+                <p class="single-card__section-text">{{ recipe.description|linebreaksbr }}</p>
             </div>
         </div>
     </div>

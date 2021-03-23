@@ -61,7 +61,7 @@ class Recipe(models.Model):
     myrecipes = RecipeQuerySet.as_manager()
 
     def added_in_favorites(self):
-        return self.favorites.all().count()
+        return self.favorites.count()
 
     added_in_favorites.short_description = 'Добавлений в избранное'
     fav_counter = property(added_in_favorites)
@@ -131,8 +131,8 @@ class Amount(models.Model):
         ]
 
     def __str__(self):
-        rec = Recipe.objects.get(id=self.recipe.id)
-        ingr = Ingredient.objects.get(id=self.ingredient.id)
+        rec = self.recipe
+        ingr = self.ingredient
         unit = ingr.measurement_unit
         return f'{self.value} {unit} {ingr} для {rec.name}'
 

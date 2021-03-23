@@ -29,6 +29,7 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 class AmountInline(admin.TabularInline):
     model = Amount
+    min_num = 1
 
 
 @admin.register(Recipe)
