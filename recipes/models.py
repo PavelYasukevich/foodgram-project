@@ -4,6 +4,7 @@ from django.urls import reverse
 
 User = get_user_model()
 
+
 class RecipeQuerySet(models.QuerySet):
     def authors(self):
         return self.filter(role='A')

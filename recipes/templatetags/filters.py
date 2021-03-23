@@ -1,6 +1,5 @@
 from django import template
 from django.contrib.auth import get_user_model
-from django.template.defaultfilters import stringfilter
 
 from recipes.models import Favorite, Purchase, Subscription, Tag
 
@@ -20,6 +19,7 @@ TENSES = {
     4: 'а',
 }
 
+
 @register.filter
 def tense(text, count):
     end = int(count) % 100
@@ -33,10 +33,12 @@ def in_subscriptions(author, user):
     return Subscription.objects.filter(author=author, user=user).exists()
 #   return user in author.subscribers
 
+
 @register.filter
 def in_favorites(recipe, user):
     return Favorite.objects.filter(recipe=recipe, user=user).exists()
 #   return user.id in recipe.favored_by
+
 
 @register.filter
 def in_purchases(recipe, user):
