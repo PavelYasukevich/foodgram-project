@@ -179,7 +179,6 @@ class Tag(models.Model):
     )
     color = models.CharField(
         max_length=10,
-        blank=True,
         verbose_name='Цвет',
         help_text='Цвет тега на страницах сайта',
     )
