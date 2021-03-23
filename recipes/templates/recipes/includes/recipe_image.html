@@ -1,0 +1,5 @@
+{% load static %}
+
+{% if link %}<a href="{% url 'recipe' recipe.id %}" class="link">{% endif %}
+    <img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class={{ class }}>
+{% if link %}</a>{% endif %}

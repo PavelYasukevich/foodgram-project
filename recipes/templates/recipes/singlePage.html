@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ recipe.author.id }}">
-        <img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="single-card__image">
+        {% include 'recipes/includes/recipe_image.html' with link=False class='single-card__image' %}
         <div class="single-card__info">
             <div class="single-card__header-info">
                 <h1 class="single-card__title">{{ recipe.name }}</h1>

@@ -11,7 +11,7 @@
             {% for recipe in author.recipes.all|slice:"3" %}
                 <li class="card-user__item">
                     <div class="recipe">
-                        <a href="{% url 'recipe' recipe.id %}" class="link"><img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image"></a>
+                        {% include 'recipes/includes/recipe_image.html' with link=True class='recipe__image' %}
                         <h3 class="recipe__title">{{ recipe.name|capfirst }}</h3>
                         {% include 'recipes/includes/recipe_cooking_time.html' with class='recipe__text' time=recipe.cooking_time %}
                     </div>
