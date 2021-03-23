@@ -1,0 +1,5 @@
+{% load static %}
+<p class={{ class }}>
+    <span class="icon-user"></span>
+    {% include 'recipes/includes/recipe_author_link.html' with author=author %}
+</p>

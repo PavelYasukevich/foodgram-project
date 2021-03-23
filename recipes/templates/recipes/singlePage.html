@@ -30,10 +30,7 @@
                 {% include 'recipes/includes/recipe_cooking_time.html' with class='single-card__text' time=recipe.cooking_time %}
                 <ul class="single-card__items">
                     <li class="single-card__item">
-                        <p class="single-card__text">
-                            <span class="icon-user"></span>
-                            {% include 'recipes/includes/recipe_author_link.html' with author=recipe.author %}
-                        </p>
+                        {% include 'recipes/includes/user_icon.html' with class='single-card__text' author=recipe.author %}
                     </li>
                     {% if request.user == recipe.author %}
                         <li class="single-card__item">
