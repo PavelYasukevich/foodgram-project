@@ -176,6 +176,12 @@ class Tag(models.Model):
         help_text='Тег',
         choices=CHOICES,
     )
+    color = models.CharField(
+        max_length=10,
+        blank=True,
+        verbose_name='Цвет',
+        help_text='Цвет тега на страницах сайта',
+    )
 
     class Meta:
         verbose_name = 'Тег'
@@ -183,11 +189,6 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.get_name_display()
-
-    @property
-    def color(self):
-        colors = {'breakfast': 'orange', 'lunch': 'green', 'dinner': 'purple'}
-        return colors[self.name]
 
 
 class Subscription(models.Model):
