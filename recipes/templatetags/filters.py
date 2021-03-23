@@ -46,15 +46,6 @@ def in_purchases(recipe, user):
 #   return user.id in recipe.purchased_by
 
 
-@register.simple_tag
-def add_filter(request_args):
-    output = ''
-    if request_args:
-        for arg in request_args:
-            output = f'{output}&tags={arg}'
-    return output
-
-
 @register.inclusion_tag(
     'recipes/aux/render_edit_recipe_ingrs.html',
     name='edit_recipe_ingrs'

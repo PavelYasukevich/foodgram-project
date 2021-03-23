@@ -1,21 +1,25 @@
 from recipes.models import Tag
 
 
-def shop_list_size(request):
-    if request.user.is_authenticated:
-        count = request.user.purchases.all().count()
-    else:
-        count = 0
+def tags_for_paginator_link(request):
+    request_args = request.GET.getlist('tags')
+    output = ''
+    if request_args:
+        for arg in request_args:
+            output = f'{output}&tags={arg}'
     return {
-        'shop_list_size': count
+        'tags_for_paginator_link': output
     }
 
 
-def request_args(request):
-    return {
-        'request_args': request.GET.getlist('tags')
-    }
 
+# @register.simple_tag
+# def add_filter(request_args):
+#     output = ''
+#     if request_args:
+#         for arg in request_args:
+#             output = f'{output}&tags={arg}'
+#     return output
 
 
 # @register.inclusion_tag(
