@@ -5,11 +5,7 @@
     <a href="{% url 'recipe' recipe.id %}" class="link"><img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="card__image"></a>
     <div class="card__body">
         <a class="card__title link" href="{% url 'recipe' recipe.id %}">{{ recipe.name|capfirst }}</a>
-        <ul class="card__items">
-            {% for tag in recipe.tags.all %}
-                <li class="card__item"><span class="badge badge_style_{{ tag.color }}">{{ tag.get_name_display }}</span></li>
-            {% endfor %}
-        </ul>   
+        {% include 'recipes/includes/recipe_tags.html' with ul_class='card__items' li_class='card__item' recipe=recipe%}
         <div class="card__items card__items_column">
             {% include 'recipes/includes/recipe_cooking_time.html' with class='card__text' time=recipe.cooking_time %}
             {% include 'recipes/includes/user_icon.html' with class='card__text' author=recipe.author %}
