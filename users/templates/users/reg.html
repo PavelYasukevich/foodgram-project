@@ -14,19 +14,18 @@
     </div>
     <div class="form-container">
         <form class="form" method="post" action="{% url 'signup' %}">
-            {% csrf_token %}
-            {% for field in form %}
-            <div class="form__group">
-                <label for="{{ field.id_for_label }}" class="form__label">{{ field.label }}</label>
-                <div class="form__field-group">
-                    {{ field | addclass:"form__input"}}
-                    <span class="form__error">{{ field.errors }}</span>
-                </div>
-            </div>
-            {% endfor %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="form__group alert alert-success" role="alert"> {{ message }} </div>
+                {% endfor %}
+            {% endif %}
+
+            {% include 'users/includes/account_action_form.html' %}
+
             <div class="form__footer">
-                <button class="button button_style_blue">Создать аккаунт</button>
+                {% include 'users/includes/form_button.html' with button_title='Создать аккаунт' %}
             </div>
+
         </form>
     </div>
 {% endblock %}

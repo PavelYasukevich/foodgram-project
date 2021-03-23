@@ -42,6 +42,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'id',
         'name',
         'author',
+        'fav_counter'
     )
     list_display_links = ('name',)
     list_filter = (

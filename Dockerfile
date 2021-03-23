@@ -2,9 +2,9 @@ FROM python:slim
 
 WORKDIR /foodgram
 
-COPY . .
-
 RUN apt-get update && apt-get install -y wkhtmltopdf
+
+COPY . .
 
 RUN pip install -r requirements.txt
 
