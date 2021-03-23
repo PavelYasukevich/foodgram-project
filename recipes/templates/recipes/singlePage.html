@@ -27,7 +27,7 @@
                 {% endfor %}
             </ul>
             <div class="single-card__items single-card__items_column">
-                <p class="single-card__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
+                {% include 'recipes/includes/recipe_cooking_time.html' with class='single-card__text' time=recipe.cooking_time %}
                 <ul class="single-card__items">
                     <li class="single-card__item">
                         <p class="single-card__text">
@@ -36,14 +36,18 @@
                         </p>
                     </li>
                     {% if request.user == recipe.author %}
-                        <li class="single-card__item">  <a style="margin-left: 2.5em" href="{% url 'edit_recipe' recipe.id %}" class="single-card__text">Редактировать рецепт</a></li>
+                        <li class="single-card__item">
+                            <a style="margin-left: 2.5em" href="{% url 'edit_recipe' recipe.id %}" class="single-card__text">
+                                Редактировать рецепт
+                            </a>
+                        </li>
                     {% endif %}
                 </ul>
             </div>
             <ul class="single-card__items">
                 {% if user.is_authenticated %}
                     {% include 'recipes/includes/purchase.html' with recipe=recipe user=user wrap='True' %}
-                    {% include 'recipes/includes/sub.html' with author=recipe.author user=user tag='li' %}
+                    {% include 'recipes/includes/sub_unsub_button.html' with author=recipe.author user=user tag='li' %}
                 {% endif %}
             </ul>
             <div class="single-card__section">

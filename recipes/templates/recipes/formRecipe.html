@@ -3,12 +3,12 @@
 {% load custom_filters %}
 
 {% block head %}
-    <title>{% if recipe %}Редактирование{% else %}Создание{% endif %} рецепта</title>
+    <title>{{ recipe|yesno:"Редактирование,Создание" }} рецепта</title>
     <link rel="stylesheet" href="{% static 'pages/form.css' %}">
 {% endblock %}
 
 {% block main_header %}
-    <h1 class="main__title">{% if recipe %}Редактирование{% else %}Создание{% endif %} рецепта</h1>
+    <h1 class="main__title">{{ recipe|yesno:"Редактирование,Создание" }} рецепта</h1>
 {% endblock %}
 
 {% block content %}
@@ -82,12 +82,7 @@
                 </div>
             </div>
             <div class="form__footer">
-                {% if recipe %}
-                    <button class="button button_style_blue">Сохранить</button>
-                    <a style="margin-left: 2.5em" href="{% url 'delete_recipe' recipe.id %}" class="form__ingredient-link">Удалить</a>
-                {% else %}
-                    <button class="button button_style_blue">Создать рецепт</button>
-                {% endif %}
+                {% include 'recipes/includes/recipe_form_button.html' %}
             </div>
         </form>
     </div>

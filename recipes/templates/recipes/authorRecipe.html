@@ -16,8 +16,8 @@
 {% endblock %}
 
 {% block content %}
-    {% if user.is_authenticated and user != author %}
-        {% include 'recipes/includes/sub.html' with author=author user=user tag='p' style='padding: 0 0 2em 0;' %}
+    {% if user.is_authenticated %}
+        {% include 'recipes/includes/sub_unsub_button.html' with author=author user=user tag='p' style='padding: 0 0 2em 0;' %}
     {% endif %}
 
     <div class="card-list">

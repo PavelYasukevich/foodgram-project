@@ -11,7 +11,7 @@
             {% endfor %}
         </ul>   
         <div class="card__items card__items_column">
-            <p class="card__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
+            {% include 'recipes/includes/recipe_cooking_time.html' with class='card__text' time=recipe.cooking_time %}
             <p class="card__text">
                 <span class="icon-user"></span>
                 {% include 'recipes/includes/recipe_author_link.html' with author=recipe.author %}

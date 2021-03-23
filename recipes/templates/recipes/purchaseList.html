@@ -18,7 +18,7 @@
                     <div class="recipe recipe_reverse">
                         <a href="{% url 'recipe' recipe.id %}" class="link"><img src="{{ recipe.image.url }}" alt="{% static 'images/testCardImg.png' %}" class="recipe__image recipe__image_big"></a>
                         <h3 class="recipe__title">{{ recipe.name|capfirst }}</h3>
-                        <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
+                        {% include 'recipes/includes/recipe_cooking_time.html' with class='recipe_text' time=recipe.cooking_time %}
                     </div>
                     <a type="button" class="button shopping-list__button">Удалить</a>
                 </li>
