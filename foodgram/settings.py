@@ -57,6 +57,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'recipes.context_processors.tags_for_paginator_link',
+                'recipes.context_processors.recipe_ingredients',
             ],
             'libraries': {
                 'custom_filters': 'recipes.templatetags.filters',

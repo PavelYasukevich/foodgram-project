@@ -7,7 +7,7 @@ from .models import Amount, Ingredient, Recipe
 User = get_user_model()
 
 
-def make_purchase_list_for_download(user) -> dict:
+def make_purchase_list_for_download(user):
     """Сформировать ингредиенты для скачивания."""
     ingredients = user.purchases.select_related('recipe').prefetch_related(
         'recipe__ingredients').order_by(
@@ -48,7 +48,7 @@ def _filter_queryset_by_tags(queryset, tags):
     return queryset
 
 
-def get_ingr_list_from_request_data(data: dict, form):
+def get_ingr_list_from_request_data(data, form):
     '''Вернуть список ингредиентов создаваемого рецепта.'''
     ingrs = list()
     for html_name, ingredient_name in data.items():

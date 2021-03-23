@@ -1,4 +1,6 @@
-from recipes.models import Tag
+from django.shortcuts import get_object_or_404
+
+from recipes.models import Recipe
 
 
 def tags_for_paginator_link(request):
@@ -12,32 +14,21 @@ def tags_for_paginator_link(request):
     }
 
 
-
-# @register.simple_tag
-# def add_filter(request_args):
-#     output = ''
-#     if request_args:
-#         for arg in request_args:
-#             output = f'{output}&tags={arg}'
-#     return output
-
-
-# @register.inclusion_tag(
-#     'recipes/aux/render_edit_recipe_ingrs.html',
-#     name='edit_recipe_ingrs'
-# )
-# @register.inclusion_tag(
-#     'recipes/aux/render_single_recipe_ingrs.html',
-#     name='single_recipe_ingrs'
-# )
-# def render_recipe_edit_ingrs(recipe):
-#     current_ingrs = []
-#     recipe_ingrs = recipe.ingredients.all()
-#     recipe_amounts = recipe.amounts.all()
-#     for idx, ingr in enumerate(recipe_ingrs, 1):
-#         amount = recipe_amounts.get(ingredient=ingr.id)
-#         current_ingrs.append((idx, ingr, amount.value))
-#     return {'current_ingrs': current_ingrs}
+def recipe_ingredients(request):
+    recipe_id = request.resolver_match.kwargs.get('pk')
+    if recipe_id:
+        recipe = get_object_or_404(
+            Recipe.objects.prefetch_related('ingredients'),
+            id=recipe_id
+        )
+        recipe_ingrs = recipe.ingredients.all()
+        recipe_amounts = recipe.amounts.all()
+        current_ingrs = []
+        for idx, ingr in enumerate(recipe_ingrs, 1):
+            amount = recipe_amounts.get(ingredient=ingr.id)
+            current_ingrs.append((idx, ingr, amount.value))
+        return {'recipe_ingredients': current_ingrs}
+    return {'recipe_ingredients': None}
 
 
 # @register.inclusion_tag('recipes/aux/render_filter.html')

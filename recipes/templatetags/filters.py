@@ -54,14 +54,8 @@ def in_purchases(recipe, user):
     'recipes/aux/render_single_recipe_ingrs.html',
     name='single_recipe_ingrs'
 )
-def render_recipe_edit_ingrs(recipe):
-    current_ingrs = []
-    recipe_ingrs = recipe.ingredients.all()
-    recipe_amounts = recipe.amounts.all()
-    for idx, ingr in enumerate(recipe_ingrs, 1):
-        amount = recipe_amounts.get(ingredient=ingr.id)
-        current_ingrs.append((idx, ingr, amount.value))
-    return {'current_ingrs': current_ingrs}
+def render_recipe_edit_ingrs(recipe_ingredients):
+    return {'current_ingrs': recipe_ingredients}
 
 
 @register.inclusion_tag('recipes/aux/render_filter.html')
