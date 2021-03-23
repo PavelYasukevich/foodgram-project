@@ -11,8 +11,7 @@
                     class="tags__checkbox tags__checkbox_style_{{ tag.color }}"
                     {% if tag.name in selected_filters %}checked{% endif %}
                 >
-    
-                <span class="tags__label"> {{ tag }}</span>
+                <span class="tags__label">{{ tag }}</span>
             </li>
         {% endfor %}
     </ul>

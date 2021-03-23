@@ -10,7 +10,7 @@ from django_pdfkit import PDFView
 from pytils.translit import slugify
 
 from . import services
-from .forms import FilterForm, RecipeForm
+from .forms import RecipeForm
 from .models import Favorite, Purchase, Recipe
 
 User = get_user_model()
@@ -81,11 +81,6 @@ class IndexView(PaginatorRedirectMixin, ListView):
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/index.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filterform'] = FilterForm(self.request.GET)
-        return context
-
     def get_queryset(self):
         queryset = services.get_recipes_queryset_filtered_by_tags(
             tags=self.request.GET.getlist('tags'),
@@ -111,7 +106,6 @@ class ProfileView(PaginatorRedirectMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filterform'] = FilterForm(self.request.GET)
         context['author'] = get_object_or_404(User, id=self.kwargs.get('id'))
         return context
 
@@ -169,11 +163,6 @@ class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     ordering = '-pub_date'
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/favorite.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filterform'] = FilterForm(self.request.GET)
-        return context
 
     def get_queryset(self):
         queryset = services.get_recipes_queryset_filtered_by_tags(

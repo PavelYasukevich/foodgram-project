@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from .forms import FilterForm
 
 from recipes.models import Recipe, Tag
 
@@ -43,23 +42,3 @@ def all_tags(request):
     return {
         'all_tags': Tag.objects.all()
     }
-
-
-# def filterform(request)
-#     context['filterform'] = FilterForm(self.request.GET)
-#     return (
-#         'filterform': FilterForm(request.GET)
-#     )
-
-
-# @register.inclusion_tag('recipes/aux/render_filter.html')
-# def render_filter(items):
-#     data = []
-#     for item in items:
-#         name = item.data['value'].value
-#         obj = Tag.objects.get(name=name)
-#         item.data['attrs']['class'] = (
-#             f'tags__checkbox tags__checkbox_style_{obj.color}'
-#         )
-#         data.append((item, obj))
-#     return {'items': data}

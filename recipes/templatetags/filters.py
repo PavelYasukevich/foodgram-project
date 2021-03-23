@@ -1,7 +1,7 @@
 from django import template
 from django.contrib.auth import get_user_model
 
-from recipes.models import Favorite, Purchase, Subscription, Tag
+from recipes.models import Favorite, Purchase, Subscription
 
 User = get_user_model()
 register = template.Library()

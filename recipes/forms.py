@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Recipe, Tag
+from .models import Recipe
 
 
 class ImageFieldWidget(forms.ClearableFileInput):
@@ -19,11 +19,3 @@ class RecipeForm(forms.ModelForm):
             'image': ImageFieldWidget(),
             'tags': SpecialCheckboxSelectMultiple(),
         }
-
-
-class FilterForm(forms.Form):
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        to_field_name='name',
-        widget=forms.CheckboxSelectMultiple,
-    )
