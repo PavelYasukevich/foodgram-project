@@ -1,11 +1,12 @@
 {% load custom_filters %}
-
-{% if author|in_subscriptions:user %}
-    <div class="author-subscribe" data-author="{{ author.id }}">
-        <{{ tag }} style={{ style}}><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></{{ tag }}>
-    </div>
-{% else%}
-    <div class="author-subscribe" data-author="{{ author.id }}">
-        <{{ tag }} style={{ style }}><button class="button button_style_blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></{{ tag }}>
-    </div>
+{% if user != author %}
+    {% if author|in_subscriptions:user %}
+        <div class="author-subscribe" data-author="{{ author.id }}">
+            <{{ tag }} style={{ style}}><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></{{ tag }}>
+        </div>
+    {% else%}
+        <div class="author-subscribe" data-author="{{ author.id }}">
+            <{{ tag }} style={{ style }}><button class="button button_style_blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></{{ tag }}>
+        </div>
+    {% endif %}
 {% endif %}

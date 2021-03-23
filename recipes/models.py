@@ -213,6 +213,10 @@ class Subscription(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'author'],
                 name='unique_subscription',
+            ),
+            models.CheckConstraint(
+                check=~models.Q(user__exact=models.F('author')),
+                name='self_sub_inhibit'
             )
         ]
 
