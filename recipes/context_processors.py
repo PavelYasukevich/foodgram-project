@@ -1,6 +1,14 @@
 from django.shortcuts import get_object_or_404
+from .forms import FilterForm
 
-from recipes.models import Recipe
+from recipes.models import Recipe, Tag
+
+
+def selected_filters(request):
+    request_args = request.GET.getlist('tags')
+    return {
+        'selected_filters': request_args
+    }
 
 
 def tags_for_paginator_link(request):
@@ -29,6 +37,19 @@ def recipe_ingredients(request):
             current_ingrs.append((idx, ingr, amount.value))
         return {'recipe_ingredients': current_ingrs}
     return {'recipe_ingredients': None}
+
+
+def all_tags(request):
+    return {
+        'all_tags': Tag.objects.all()
+    }
+
+
+# def filterform(request)
+#     context['filterform'] = FilterForm(self.request.GET)
+#     return (
+#         'filterform': FilterForm(request.GET)
+#     )
 
 
 # @register.inclusion_tag('recipes/aux/render_filter.html')

@@ -56,16 +56,3 @@ def in_purchases(recipe, user):
 )
 def render_recipe_edit_ingrs(recipe_ingredients):
     return {'current_ingrs': recipe_ingredients}
-
-
-@register.inclusion_tag('recipes/aux/render_filter.html')
-def render_filter(items):
-    data = []
-    for item in items:
-        name = item.data['value'].value
-        obj = Tag.objects.get(name=name)
-        item.data['attrs']['class'] = (
-            f'tags__checkbox tags__checkbox_style_{obj.color}'
-        )
-        data.append((item, obj))
-    return {'items': data}

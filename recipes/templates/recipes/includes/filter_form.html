@@ -1,5 +1,19 @@
 {% load custom_filters %}
 
 <form method="get" id="formID" onchange="document.getElementById('formID').submit()">
-    {% render_filter filterform.tags %}
+    <ul class="tags">
+        {% for tag in all_tags %}
+            <li class="tags__item">
+                <input 
+                    type="checkbox"
+                    name="tags"
+                    value="{{ tag.name }}"
+                    class="tags__checkbox tags__checkbox_style_{{ tag.color }}"
+                    {% if tag.name in selected_filters %}checked{% endif %}
+                >
+    
+                <span class="tags__label"> {{ tag }}</span>
+            </li>
+        {% endfor %}
+    </ul>
 </form>
