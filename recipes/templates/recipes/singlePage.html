@@ -38,8 +38,10 @@
             </div>
             <ul class="single-card__items">
                 {% if user.is_authenticated %}
-                    {% include 'recipes/includes/purchase.html' with recipe=recipe user=user wrap='True' %}
-                    {% include 'recipes/includes/sub_unsub_button.html' with author=recipe.author user=user tag='li' %}
+                <li class="single-card__item">
+                    {% include 'recipes/includes/purchase.html' with recipe=recipe user=user %}
+                </li>
+                {% include 'recipes/includes/sub_unsub_button.html' with author=recipe.author user=user tag='li' %}
                 {% endif %}
             </ul>
             <div class="single-card__section">

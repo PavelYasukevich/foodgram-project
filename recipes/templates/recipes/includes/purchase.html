@@ -1,15 +1,10 @@
 {% load custom_filters %}
 
-{% if recipe|in_purchases:user %}
-    {% if wrap %}<li class="single-card__item">{% endif %}
-    <button class="button button_style_light-blue-outline" name="purchases">
-        <span class="icon-check button__icon"></span>Рецепт добавлен
-    </button>
-    {% if wrap %}</li>{% endif %}
-{% else %}
-    {% if wrap %}<li class="single-card__item">{% endif %}
-    <button class="button button_style_light-blue" name="purchases" data-out>
-        <span class="icon-plus button__icon"></span>Добавить в покупки
-    </button>
-    {% if wrap %}</li>{% endif %}
-{% endif %}
+{% with flag=recipe|in_purchases:user %}
+    <button
+        class="button button_style_light-blue{% if flag %}-outline{% endif %}"
+        name="purchases"
+        {% if not flag %}data-out{% endif %}
+    >
+        <span class="icon-{{ flag|yesno:'check,plus'}} button__icon"></span>{{ flag|yesno:'Рецепт добавлен,Добавить в покупки' }}</button>
+{% endwith %}
