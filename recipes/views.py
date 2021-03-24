@@ -36,10 +36,13 @@ class RecipePostMixin:
 
     def form_valid(self, form, ingrs):
         self.object = form.save()
-        services.create_amount_objects_and_add_ingrs_to_recipe(
-            recipe=self.object,
-            ingrs=ingrs,
-        )
+
+        Amount.objects.filter(recipe=self.object).delete()
+        for ingr, amount_value in ingrs:
+            Amount.objects.create(
+                value=amount_value, recipe=self.object, ingredient=ingr
+            )
+            recipe.ingredients.add(ingr)
         return redirect(self.get_success_url())
 
 

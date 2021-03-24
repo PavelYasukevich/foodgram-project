@@ -73,13 +73,3 @@ def _add_non_field_error_to_form(form, error_msg):
     в поля формы рецепта.
     '''
     form.add_error(None, error_msg)
-
-
-def create_amount_objects_and_add_ingrs_to_recipe(recipe, ingrs):
-    '''Создать объекты Amount в базе, добавить ингредиенты в рецепт.'''
-    Amount.objects.filter(recipe=recipe).delete()
-    for ingr, amount_value in ingrs:
-        Amount.objects.create(
-            value=amount_value, recipe=recipe, ingredient=ingr
-        )
-        recipe.ingredients.add(ingr)
