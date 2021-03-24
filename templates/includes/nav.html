@@ -11,7 +11,7 @@
                         <li class="nav__item {% if page == 'favorites' %}nav__item_active{% endif %}"><a href="{% url 'favorites' %}" class="nav__link link">Избранное</a></li>
                         <li class="nav__item {% if page == 'purchases' %}nav__item_active{% endif %}">
                             <a href="{% url 'purchases' %}" class="nav__link link">Список покупок
-                                <span class="badge badge_style_blue nav__badge" id="counter" {% if not user.purchases.count %}style="display:none"{% endif %}>{{ user.purchases.count }}</span>
+                                <span class="badge badge_style_blue nav__badge" id="counter">{% if user.purchases.count > 0 %}{{ user.purchases.count }}{% endif %}</span>
                             </a>
                         </li>
                     {% endif %}

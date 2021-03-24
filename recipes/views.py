@@ -120,14 +120,13 @@ class ProfileView(PaginatorRedirectMixin, ListView):
 class SubscriptionsView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     """Список авторов, на которых подписан пользователь."""
 
-    context_object_name = 'authors'
+    context_object_name = 'subscriptions'
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/myFollow.html'
 
     def get_queryset(self):
-        queryset = services.get_user_subscriptions_list(
-            user_id=self.request.user.id
-        )
+        queryset = self.request.user.subscriptions.select_related(
+            'author', 'author__recipes')
         return queryset
 
 

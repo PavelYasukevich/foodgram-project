@@ -12,12 +12,12 @@
 
 {% block content %}
     <div class="card-list">
-        {% for author in authors %}
+        {% for subscription.author in subscriptions %}
             {% include 'recipes/includes/user_card.html' with author=author %}
         {% endfor %}
     </div>
 
-    {% if not authors %}
+    {% if not subscriptions %}
         <h3 class="single-card__section-text">Вы не подписаны ни на одного автора.</h3>
     {% endif %}
 
