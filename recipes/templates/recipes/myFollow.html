@@ -12,8 +12,8 @@
 
 {% block content %}
     <div class="card-list">
-        {% for subscription.author in subscriptions %}
-            {% include 'recipes/includes/user_card.html' with author=author %}
+        {% for subscription in subscriptions %}
+            {% include 'recipes/includes/user_card.html' with author=subscription.author %}
         {% endfor %}
     </div>
 

@@ -125,9 +125,7 @@ class SubscriptionsView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     template_name = 'recipes/myFollow.html'
 
     def get_queryset(self):
-        queryset = self.request.user.subscriptions.select_related(
-            'author', 'author__recipes')
-        return queryset
+        return self.request.user.subscriptions.select_related('author')
 
 
 class CreateRecipeView(LoginRequiredMixin, RecipePostMixin, CreateView):
