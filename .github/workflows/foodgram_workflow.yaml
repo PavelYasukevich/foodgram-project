@@ -80,7 +80,6 @@ jobs:
           sudo docker pull ${{ secrets.USER }}/foodgram
           id=$(docker create ${{ secrets.USER }}/foodgram)
           sudo docker cp $id:/foodgram/docker-compose.yaml ~/foodgram/docker-compose.yaml
-          sudo docker cp $id:/foodgram/nginx/nginx.conf ~/foodgram/nginx/nginx.conf
           cd ~/foodgram
           sudo docker-compose down
           sudo docker-compose rm -v

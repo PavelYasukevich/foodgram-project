@@ -4,6 +4,7 @@ volumes:
   postgres_data:
   staticfiles:
   mediafiles:
+  nginx_conf:
 
 services:
   db:
@@ -20,6 +21,7 @@ services:
     volumes:
       - staticfiles:/foodgram/static
       - mediafiles:/foodgram/media
+      - nginx_conf:/foodgram/nginx/ 
     depends_on:
       - db
     env_file:
@@ -32,7 +34,7 @@ services:
     volumes:
       - staticfiles:/foodgram/static
       - mediafiles:/foodgram/media
-      - /home/ptnt/foodgram/nginx.conf:/etc/nginx/conf.d/
+      - nginx_conf:/etc/nginx/conf.d/ 
     ports:
       - "80:80"
     depends_on:
