@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
@@ -11,7 +11,7 @@ from django_pdfkit import PDFView
 from . import services
 from .context_processors import tags_for_paginator_link
 from .forms import RecipeForm
-from .models import Amount, Favorite, Purchase, Recipe
+from .models import Amount, Recipe
 
 User = get_user_model()
 
@@ -27,7 +27,7 @@ class RecipePostMixin:
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         valid_ingrs = services.handle_form_ingredients(
-            data=self.request.POST, # TODO: get from form
+            data=self.request.POST,
             form=form,
         )
         if form.is_valid():
@@ -35,11 +35,11 @@ class RecipePostMixin:
         else:
             return self.form_invalid(form)
 
-    def form_valid(self, form, ingrs):
+    def form_valid(self, form, valid_ingrs):
         self.object = form.save()
-
         Amount.objects.filter(recipe=self.object).delete()
-        for ingr, amount_value in ingrs:
+
+        for _, ingr, amount_value in valid_ingrs:
             Amount.objects.create(
                 value=amount_value, recipe=self.object, ingredient=ingr
             )

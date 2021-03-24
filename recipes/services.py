@@ -1,8 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
-from django.shortcuts import get_object_or_404
 
-from .models import Amount, Ingredient, Recipe
+from .models import Ingredient, Recipe
 
 User = get_user_model()
 
@@ -43,6 +42,7 @@ def handle_form_ingredients(data, form):
     _add_non_field_error_to_form(form, errors)
     return valid_ingrs
 
+
 def _check_form_ingrs(data):
     form_ingrs = _get_ingr_list_from_request_data(data)
     ingrs_to_add = Ingredient.objects.filter(name__in=form_ingrs)
@@ -57,7 +57,11 @@ def _check_form_ingrs(data):
         errors.append('Не указано ни одного ингредиента \
             из существующего перечня')
 
-    valid_ingrs = [(ingr, form_ingrs[ingr.name]) for ingr in ingrs_to_add]
+    valid_ingrs = [
+        (idx, ingr, form_ingrs[ingr.name])
+        for idx, ingr
+        in enumerate(ingrs_to_add)
+    ]
     return valid_ingrs, errors
 
 
