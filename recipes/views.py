@@ -1,14 +1,12 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import InvalidPage
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django_pdfkit import PDFView
-from pytils.translit import slugify
 
 from . import services
 from .context_processors import tags_for_paginator_link

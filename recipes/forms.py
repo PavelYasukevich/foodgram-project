@@ -32,4 +32,3 @@ class RecipeForm(forms.ModelForm):
         self.instance.save()
         self.save_m2m()
         return self.instance
-        
