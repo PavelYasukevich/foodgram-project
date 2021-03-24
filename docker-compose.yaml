@@ -32,7 +32,7 @@ services:
     volumes:
       - staticfiles:/foodgram/static
       - mediafiles:/foodgram/media
-      - ~/foodgram/nginx/:/etc/nginx/conf.d/
+      - ~/foodgram/nginx:/etc/nginx/conf.d
     ports:
       - "80:80"
     depends_on:
