@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 from recipes.models import Recipe, Tag
+from . import services
 
 
 def selected_filters(request):
@@ -22,6 +23,19 @@ def tags_for_paginator_link(request):
 
 
 def recipe_ingredients(request):
+    url = request.resolver_match.url_name
+    print(url)
+    if url == 'new_recipe':
+        valid_ingrs, _ = services._check_form_ingrs(request.POST)
+        print(valid_ingrs)
+        current_ingrs = [
+            (idx, ingr, amount)
+            for idx, (ingr, amount)
+            in enumerate(valid_ingrs, 1)
+        ]
+        print(current_ingrs)
+        return {'recipe_ingredients': current_ingrs}
+
     recipe_id = request.resolver_match.kwargs.get('pk')
     if recipe_id:
         recipe = get_object_or_404(
@@ -35,6 +49,7 @@ def recipe_ingredients(request):
             amount = recipe_amounts.get(ingredient=ingr.id)
             current_ingrs.append((idx, ingr, amount.value))
         return {'recipe_ingredients': current_ingrs}
+    
     return {'recipe_ingredients': None}
 
 

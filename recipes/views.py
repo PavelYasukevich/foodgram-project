@@ -11,7 +11,7 @@ from django_pdfkit import PDFView
 from . import services
 from .context_processors import tags_for_paginator_link
 from .forms import RecipeForm
-from .models import Favorite, Purchase, Recipe
+from .models import Amount, Favorite, Purchase, Recipe
 
 User = get_user_model()
 
@@ -25,12 +25,13 @@ class RecipePostMixin:
         return result
 
     def post(self, request, *args, **kwargs):
-        ingrs, form = services.get_ingr_list_from_request_data(
-            data=self.request.POST,
-            form=self.get_form(),
+        form = self.get_form()
+        valid_ingrs = services.handle_form_ingredients(
+            data=self.request.POST, # TODO: get from form
+            form=form,
         )
         if form.is_valid():
-            return self.form_valid(form, ingrs)
+            return self.form_valid(form, valid_ingrs)
         else:
             return self.form_invalid(form)
 
@@ -42,7 +43,7 @@ class RecipePostMixin:
             Amount.objects.create(
                 value=amount_value, recipe=self.object, ingredient=ingr
             )
-            recipe.ingredients.add(ingr)
+            self.object.ingredients.add(ingr)
         return redirect(self.get_success_url())
 
 
