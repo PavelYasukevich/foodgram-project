@@ -6,18 +6,17 @@ from recipes.models import Favorite, Purchase, Subscription
 User = get_user_model()
 register = template.Library()
 
-
-@register.filter
-def addclass(field, css):
-    return field.as_widget(attrs={"class": css})
-
-
 TENSES = {
     1: '',
     2: 'а',
     3: 'а',
     4: 'а',
 }
+
+
+@register.filter
+def addclass(field, css):
+    return field.as_widget(attrs={"class": css})
 
 
 @register.filter

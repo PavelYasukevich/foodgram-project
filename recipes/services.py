@@ -94,10 +94,3 @@ def create_amount_objects_and_add_ingrs_to_recipe(recipe, ingrs):
             value=amount_value, recipe=recipe, ingredient=ingr
         )
         recipe.ingredients.add(ingr)
-
-
-def get_user_subscriptions_list(user_id):
-    '''Вернуть список авторов, на которых подписан пользователь.'''
-    # user = get_object_or_404(User, id=user_id)
-    queryset = User.objects.filter(subscribers__user__id=user_id)
-    return queryset
