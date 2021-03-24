@@ -19,6 +19,11 @@ User = get_user_model()
 class RecipePostMixin:
     """Содержит общую логику обработки создания и редактирования рецепта."""
 
+    def get_form_kwargs(self):
+        result = super().get_form_kwargs()
+        result['request'] = self.request
+        return result
+
     def post(self, request, *args, **kwargs):
         ingrs, form = services.get_ingr_list_from_request_data(
             data=self.request.POST,
@@ -30,15 +35,11 @@ class RecipePostMixin:
             return self.form_invalid(form)
 
     def form_valid(self, form, ingrs):
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.slug = slugify(self.object.name)
-        self.object.save()
+        self.object = form.save()
         services.create_amount_objects_and_add_ingrs_to_recipe(
             recipe=self.object,
             ingrs=ingrs,
         )
-        form.save_m2m()
         return redirect(self.get_success_url())
 
 

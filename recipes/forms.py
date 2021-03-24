@@ -1,4 +1,5 @@
 from django import forms
+from pytils.translit import slugify
 
 from .models import Recipe
 
@@ -19,3 +20,16 @@ class RecipeForm(forms.ModelForm):
             'image': ImageFieldWidget(),
             'tags': SpecialCheckboxSelectMultiple(),
         }
+
+    def __init__(self, request, **kwargs):
+        super().__init__(**kwargs)
+        self.request = request
+
+    def save(self, commit=True):
+        self.instance = super().save(commit=False)
+        self.instance.author = self.request.user
+        self.instance.slug = slugify(self.instance.name)
+        self.instance.save()
+        self.save_m2m()
+        return self.instance
+        

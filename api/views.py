@@ -52,7 +52,7 @@ class IngredientsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
     def get_queryset(self):
         queryset = Ingredient.objects.all()
-        query = self.request.query_params.get('query', None)
+        query = self.request.query_params.get('name', None)
         if query is not None:
             queryset = queryset.filter(name__startswith=query)
         return queryset
