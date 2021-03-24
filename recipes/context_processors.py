@@ -48,5 +48,5 @@ def recipe_ingredients(request):
 
 def all_tags(request):
     return {
-        'all_tags': Tag.objects.all()
+        'all_tags': Tag.objects.all().order_by('id')
     }
