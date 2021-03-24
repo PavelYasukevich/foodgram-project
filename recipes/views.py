@@ -2,14 +2,16 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import InvalidPage
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django_pdfkit import PDFView
 from pytils.translit import slugify
 
 from . import services
+from .context_processors import tags_for_paginator_link
 from .forms import RecipeForm
 from .models import Favorite, Purchase, Recipe
 
@@ -52,26 +54,20 @@ class PaginatorRedirectMixin:
     данные в гет-параметр вручную.
     """
 
-    def paginate_queryset(self, queryset, page_size):
-        paginator = self.get_paginator(
-            queryset,
-            page_size,
-            orphans=self.get_paginate_orphans(),
-            allow_empty_first_page=self.get_allow_empty(),
-        )
-        page_kwarg = self.page_kwarg
-        page = (
-            self.kwargs.get(page_kwarg)
-            or self.request.GET.get(page_kwarg)
-            or 1
-        )
+    def get(self, request, *args, **kwargs):
         try:
-            page_number = int(page)
-            page = paginator.page(page_number)
-        except (ValueError, InvalidPage):
-            page_number = paginator.num_pages
-            page = paginator.page(page_number)
-        return (paginator, page, page.object_list, page.has_other_pages())
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            queryset = self.get_queryset()
+            paginator = self.get_paginator(
+                queryset,
+                self.get_paginate_by(queryset),
+                orphans=self.get_paginate_orphans(),
+                allow_empty_first_page=self.get_allow_empty()
+            )
+            tags = tags_for_paginator_link(request)['tags_for_paginator_link']
+            url = reverse('index')
+            return redirect(f'{url}?page={paginator.num_pages}{tags}')
 
 
 class IndexView(PaginatorRedirectMixin, ListView):
