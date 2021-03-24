@@ -41,7 +41,7 @@
                 <li class="single-card__item">
                     {% include 'recipes/includes/purchase.html' with recipe=recipe user=user %}
                 </li>
-                {% include 'recipes/includes/sub_unsub_button.html' with author=recipe.author user=user tag='li' %}
+                {% include 'recipes/includes/sub_unsub_button.html' with recipe=recipe user=user tag='li' %}
                 {% endif %}
             </ul>
             <div class="single-card__section">

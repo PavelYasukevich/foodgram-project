@@ -1,6 +1,6 @@
 {% load custom_filters %}
-{% if user != author %}
-    {% with flag=author|in_subscriptions:user %}
+{% if user != recipe.author %}
+    {% with flag=recipe.in_subscriptions %}
         <div class="author-subscribe" data-author="{{ author.id }}">
             <{{ tag }} style={{ style }}>
                 <button

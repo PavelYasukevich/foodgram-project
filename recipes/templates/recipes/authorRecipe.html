@@ -10,14 +10,14 @@
 
 {% block main_header %}
         <h1 class="main__title">
-            {% include 'recipes/includes/recipe_author_link.html' with author=author %}
+            {% include 'recipes/includes/recipe_author_link.html' with author=author_recipes.first.author %}
         </h1>
         {% include 'recipes/includes/filter_form.html' %}
 {% endblock %}
 
 {% block content %}
     {% if user.is_authenticated %}
-        {% include 'recipes/includes/sub_unsub_button.html' with author=author user=user tag='p' style='padding: 0 0 2em 0;' %}
+        {% include 'recipes/includes/sub_unsub_button.html' with recipe=author_recipes.first user=user tag='p' style='padding: 0 0 2em 0;' %}
     {% endif %}
 
     <div class="card-list">

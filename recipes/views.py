@@ -77,18 +77,17 @@ class IndexView(PaginatorRedirectMixin, ListView):
     template_name = 'recipes/index.html'
 
     def get_queryset(self):
-        queryset = services.get_recipes_queryset_filtered_by_tags(
-            tags=self.request.GET.getlist('tags'),
-        )
-        return queryset
+        return services.get_filtered_queryset(self.request)
 
 
 class RecipeDetailView(DetailView):
     """Страница отдельного рецепта."""
 
     context_object_name = 'recipe'
-    model = Recipe
     template_name = 'recipes/singlePage.html'
+
+    def get_queryset(self):
+        return services.get_filtered_queryset(self.request)
 
 
 class ProfileView(PaginatorRedirectMixin, ListView):
@@ -99,15 +98,9 @@ class ProfileView(PaginatorRedirectMixin, ListView):
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/authorRecipe.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['author'] = get_object_or_404(User, id=self.kwargs.get('id'))
-        return context
-
     def get_queryset(self):
-        queryset = services.get_recipes_queryset_filtered_by_tags(
-            user_id=self.kwargs.get('id'),
-            tags=self.request.GET.getlist('tags'),
+        queryset = services.get_filtered_queryset(self.request).filter(
+            author__id=self.kwargs.get('id')
         )
         return queryset
 
@@ -157,12 +150,8 @@ class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     template_name = 'recipes/favorite.html'
 
     def get_queryset(self):
-        queryset = services.get_recipes_queryset_filtered_by_tags(
-            user_id=self.request.user.id,
-            model=Favorite,
-            tags=self.request.GET.getlist('tags'),
-        )
-        return queryset
+        return services.get_filtered_queryset(
+            self.request).filter(in_favored=True)
 
 
 class PurchasesView(LoginRequiredMixin, ListView):
@@ -173,11 +162,8 @@ class PurchasesView(LoginRequiredMixin, ListView):
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):
-        queryset = services.get_recipes_queryset_filtered_by_tags(
-            user_id=self.request.user.id,
-            model=Purchase,
-        )
-        return queryset
+        return services.get_filtered_queryset(
+            self.request).filter(in_purchased=True)
 
 
 class DownloadShoppingList(LoginRequiredMixin, PDFView):

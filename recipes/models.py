@@ -6,8 +6,25 @@ User = get_user_model()
 
 
 class RecipeQuerySet(models.QuerySet):
-    def authors(self):
-        return self.filter(role='A')
+    def annotated(self, user):
+        in_purchases = Purchase.objects.filter(
+            recipe=models.OuterRef('pk'),
+            user=user
+        )
+        in_favorites = Favorite.objects.filter(
+            recipe=models.OuterRef('pk'),
+            user=user
+        )
+        in_subs = Subscription.objects.filter(
+            author=models.OuterRef('author'),
+            user=user
+        )
+        queryset = self.annotate(
+            in_favored=models.Exists(in_favorites),
+            in_purchased=models.Exists(in_purchases),
+            in_subscriptions=models.Exists(in_subs)
+        )
+        return queryset
 
 
 class Recipe(models.Model):
@@ -57,8 +74,7 @@ class Recipe(models.Model):
         max_length=100,
     )
 
-    objects = models.Manager()
-    myrecipes = RecipeQuerySet.as_manager()
+    objects = RecipeQuerySet.as_manager()
 
     def added_in_favorites(self):
         return self.favorites.count()

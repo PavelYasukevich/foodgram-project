@@ -18,25 +18,14 @@ def make_purchase_list_for_download(user):
     return ingredients
 
 
-def get_recipes_queryset_filtered_by_tags(user_id=None, model=None, tags=None):
-    """Вернуть список рецептов отфильтрованный по тегам запроса."""
-    if user_id is not None:
-        queryset = _get_user_related_recipes(user_id, model)
-    else:
-        queryset = Recipe.objects.all()
-    queryset = _filter_queryset_by_tags(queryset, tags)
-    return queryset
-
-
-def _get_user_related_recipes(user_id, model=None):
-    """Вернуть список рецептов, относящихся к пользователю."""
-    user = get_object_or_404(User, id=user_id)
-    if model is not None:
-        user_related_objects = model.objects.filter(
-            user=user).values_list('recipe__id', flat=True)
-        queryset = Recipe.objects.filter(id__in=user_related_objects)
-    else:
-        queryset = Recipe.objects.filter(author=user)
+def get_filtered_queryset(request):
+    queryset = Recipe.objects.annotated(user=request.user)
+    tags=request.GET.getlist('tags')
+    if tags:
+        queryset = _filter_queryset_by_tags(
+            queryset=queryset,
+            tags=tags
+        )
     return queryset
 
 

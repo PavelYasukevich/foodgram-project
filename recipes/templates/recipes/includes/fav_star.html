@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if recipe|in_favorites:user %}
+{% if recipe.in_favored %}
     <button class="button button_style_none" name="favorites"><span class="icon-favorite {{ class }} icon-favorite_active"></span></button>
 {% else %}
     <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite {{ class }}"></span></button>

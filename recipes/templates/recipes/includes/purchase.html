@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% with flag=recipe|in_purchases:user %}
+{% with flag=recipe.in_purchased %}
     <button
         class="button button_style_light-blue{% if flag %}-outline{% endif %}"
         name="purchases"
