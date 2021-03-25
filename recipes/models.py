@@ -133,7 +133,7 @@ class Amount(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='+',
+        related_name='amounts',
         verbose_name='Ингредиент',
         help_text='Ингредиент',
     )

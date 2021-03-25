@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 
-from .models import Ingredient, Recipe
+from .models import Ingredient, Recipe, Tag
 
 User = get_user_model()
 
@@ -24,8 +24,8 @@ def make_purchase_list_for_download(user):
 def get_filtered_queryset(request):
     """
     Вернуть отфильтрованный по тегам queryset.
-    
-    Аннотирует рецепты признаками наличия в избранном и покупках, если 
+
+    Аннотирует рецепты признаками наличия в избранном и покупках, если
     пользователь авторизован, фильтрует по тегам запроса, при их наличии.
     """
     queryset = Recipe.objects.annotated(user=request.user)
@@ -37,8 +37,8 @@ def get_filtered_queryset(request):
 
 def _filter_queryset_by_tags(queryset, tags):
     """Отфильтровать queryset по тегам."""
-    if tags is not None:
-        for tag in tags:
+    for tag in tags:
+        if tag in Tag.CHOICES:
             queryset = queryset.filter(tags__name__contains=tag)
     return queryset
 
@@ -46,7 +46,7 @@ def _filter_queryset_by_tags(queryset, tags):
 def handle_form_ingredients(data, form):
     """
     Обработка ингредиентов из формы.
-    
+
     Вернуть список валидных ингредиентов (присутствующих в существующем
     перечне) и при наличии ошибок - добавить их в форму.
     """

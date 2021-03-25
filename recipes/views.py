@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import OuterRef, Prefetch, Subquery
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -11,7 +12,7 @@ from django_pdfkit import PDFView
 from . import services
 from .context_processors import tags_for_paginator_link
 from .forms import RecipeForm
-from .models import Amount, Recipe
+from .models import Amount, Ingredient, Recipe
 
 User = get_user_model()
 
@@ -166,8 +167,25 @@ class PurchasesView(LoginRequiredMixin, ListView):
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):
-        return services.get_filtered_queryset(
-            self.request).filter(in_purchased=True)
+        purchases = (
+            self.request.user.purchases.select_related("recipe")
+            .prefetch_related(
+                Prefetch(
+                    'recipe__ingredients',
+                    queryset=(
+                        Ingredient.objects.distinct().annotate(
+                            amount=Subquery(
+                                Amount.objects.filter(
+                                    ingredient=OuterRef('pk'),
+                                    recipe=OuterRef('recipe__id'),
+                                ).values('value')[:1],
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        return purchases
 
 
 class DownloadShoppingList(LoginRequiredMixin, PDFView):

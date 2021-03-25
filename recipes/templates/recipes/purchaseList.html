@@ -13,15 +13,24 @@
 {% block content %}
     <div class="card-list card-list_column">
         <ul class="shopping-list">
-            {% for recipe in purchases %}
-                <li class="shopping-list__item" data-id="{{ recipe.id }}">
-                    <div class="recipe recipe_reverse">
-                        {% include 'recipes/includes/recipe_image.html' with link=True class='recipe__image recipe__image_big' %}
-                        <h3 class="recipe__title">{{ recipe.name|capfirst }}</h3>
-                        {% include 'recipes/includes/recipe_cooking_time.html' with class='recipe_text' time=recipe.cooking_time %}
-                    </div>
-                    <a type="button" class="button shopping-list__button">Удалить</a>
-                </li>
+            {% for purchase in purchases %}
+                {% with recipe=purchase.recipe %}
+                    <li class="shopping-list__item" data-id="{{ recipe.id }}">
+                        <div class="recipe recipe_reverse">
+                            {% include 'recipes/includes/recipe_image.html' with link=True class='recipe__image recipe__image_big' %}
+                            <h3 class="recipe__title">{{ recipe.name|capfirst }}</h3>
+                            {% include 'recipes/includes/recipe_cooking_time.html' with class='recipe_text' time=recipe.cooking_time %}
+                            <div>
+                                {% for ingr in recipe.ingredients.all %}
+                                    <div class="form__field-item-ingredient" id="ing_{{ idx }}">
+                                        <span class="recipe__text">{{ ingr.name|capfirst }} - {{ ingr.amount }} {{ ingr.measurement_unit }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            </div>
+                        <a type="button" class="button shopping-list__button">Удалить</a>
+                    </li>
+                {% endwith%}
             {% endfor %}
         </ul>
         {% if purchases %}
