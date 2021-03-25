@@ -8,10 +8,18 @@
 
 {% block main_header %}
     <h1 class="main__title">Список покупок</h1>
+    {% if purchases %}
+        <a href="{% url 'download' %}"><button class="button button_style_blue">Скачать список</button></a>
+    {% endif %}
+
 {% endblock %}
 
 {% block content %}
     <div class="card-list card-list_column">
+        {% if not purchases %}
+            <h3 class="single-card__section-text">Ваш список пока пуст.</h3>
+        {% endif %}
+
         <ul class="shopping-list">
             {% for purchase in purchases %}
                 {% with recipe=purchase.recipe %}
@@ -33,11 +41,6 @@
                 {% endwith%}
             {% endfor %}
         </ul>
-        {% if purchases %}
-            <a href="{% url 'download' %}"><button class="button button_style_blue">Скачать список</button></a>
-        {% else %}
-            <h3 class="single-card__section-text">Ваш список пока пуст.</h3>
-        {% endif %}
     </div>
 {% endblock %}
 

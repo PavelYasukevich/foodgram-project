@@ -187,7 +187,7 @@ class PurchasesView(LoginRequiredMixin, ListView):
                             ).values('value')[:1],
                         )
                     )
-                ),
+                )
             )
         )
         return purchases
