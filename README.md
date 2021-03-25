@@ -1,6 +1,6 @@
 [![Foodgram workflow](https://github.com/PavelYasukevich/foodgram-project/actions/workflows/foodgram_workflow.yaml/badge.svg)](https://github.com/PavelYasukevich/foodgram-project/actions/workflows/foodgram_workflow.yaml)
 
-# DISCLAIMER!
+# DISCLAIMER!!
 
 Это **учебный** проект, сделанный в рамках курса Python backend developer. Весь **frontend** для проекта был предоставлен в рамках курса, и не является написанным мною.
 
