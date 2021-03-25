@@ -5,8 +5,13 @@ from django.db.models import OuterRef, Prefetch, Subquery
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 from django_pdfkit import PDFView
 
 from . import services
@@ -66,7 +71,7 @@ class PaginatorRedirectMixin:
                 queryset,
                 self.get_paginate_by(queryset),
                 orphans=self.get_paginate_orphans(),
-                allow_empty_first_page=self.get_allow_empty()
+                allow_empty_first_page=self.get_allow_empty(),
             )
             tags = tags_for_paginator_link(request)['tags_for_paginator_link']
             url = reverse('index')
@@ -155,8 +160,9 @@ class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
     template_name = 'recipes/favorite.html'
 
     def get_queryset(self):
-        return services.get_filtered_queryset(
-            self.request).filter(in_favored=True)
+        return services.get_filtered_queryset(self.request).filter(
+            in_favored=True
+        )
 
 
 class PurchasesView(LoginRequiredMixin, ListView):
@@ -167,22 +173,21 @@ class PurchasesView(LoginRequiredMixin, ListView):
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):
-        purchases = (
-            self.request.user.purchases.select_related("recipe")
-            .prefetch_related(
-                Prefetch(
-                    'recipe__ingredients',
-                    queryset=(
-                        Ingredient.objects.distinct().annotate(
-                            amount=Subquery(
-                                Amount.objects.filter(
-                                    ingredient=OuterRef('pk'),
-                                    recipe=OuterRef('recipe__id'),
-                                ).values('value')[:1],
-                            )
+        purchases = self.request.user.purchases.select_related(
+            'recipe'
+        ).prefetch_related(
+            Prefetch(
+                'recipe__ingredients',
+                queryset=(
+                    Ingredient.objects.distinct().annotate(
+                        amount=Subquery(
+                            Amount.objects.filter(
+                                ingredient=OuterRef('pk'),
+                                recipe=OuterRef('recipe__id'),
+                            ).values('value')[:1],
                         )
                     )
-                )
+                ),
             )
         )
         return purchases
