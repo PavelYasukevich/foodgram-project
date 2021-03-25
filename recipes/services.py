@@ -22,6 +22,12 @@ def make_purchase_list_for_download(user):
 
 
 def get_filtered_queryset(request):
+    """
+    Вернуть отфильтрованный по тегам queryset.
+    
+    Аннотирует рецепты признаками наличия в избранном и покупках, если 
+    пользователь авторизован, фильтрует по тегам запроса, при их наличии.
+    """
     queryset = Recipe.objects.annotated(user=request.user)
     tags = request.GET.getlist('tags')
     if tags:
@@ -38,12 +44,19 @@ def _filter_queryset_by_tags(queryset, tags):
 
 
 def handle_form_ingredients(data, form):
+    """
+    Обработка ингредиентов из формы.
+    
+    Вернуть список валидных ингредиентов (присутствующих в существующем
+    перечне) и при наличии ошибок - добавить их в форму.
+    """
     valid_ingrs, errors = _check_form_ingrs(data)
     _add_non_field_error_to_form(form, errors)
     return valid_ingrs
 
 
 def _check_form_ingrs(data):
+    """Получить валидный список ингредиентов и ошибки формы."""
     form_ingrs = _get_ingr_list_from_request_data(data)
     ingrs_to_add = Ingredient.objects.filter(name__in=form_ingrs)
     has_wrong_ingrs = ingrs_to_add.count() != len(form_ingrs)

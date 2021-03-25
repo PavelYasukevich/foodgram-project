@@ -78,12 +78,6 @@ class Recipe(models.Model):
 
     objects = RecipeQuerySet.as_manager()
 
-    def added_in_favorites(self):
-        return self.favorites.count()
-
-    added_in_favorites.short_description = 'Добавлений в избранное'
-    fav_counter = property(added_in_favorites)
-
     class Meta:
         ordering = ['-pub_date']
         verbose_name = 'Рецепт'
@@ -94,6 +88,12 @@ class Recipe(models.Model):
 
     def get_absolute_url(self):
         return reverse('recipe', args=[self.pk])
+
+    def added_in_favorites(self):
+        return self.favorites.count()
+
+    added_in_favorites.short_description = 'Добавлений в избранное'
+    fav_counter = property(added_in_favorites)
 
 
 class Ingredient(models.Model):
@@ -186,7 +186,14 @@ class Purchase(models.Model):
 
 
 class Tag(models.Model):
-    CHOICES = [('breakfast', 'Завтрак'), ('lunch', 'Обед'), ('dinner', 'Ужин')]
+    BREAKFAST = 'breakfast'
+    LUNCH = 'lunch'
+    DINNER = 'dinner'
+    CHOICES = [
+        (BREAKFAST, 'Завтрак'),
+        (LUNCH, 'Обед'),
+        (DINNER, 'Ужин'),
+    ]
 
     name = models.CharField(
         max_length=10,
