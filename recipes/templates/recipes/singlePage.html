@@ -16,7 +16,7 @@
                 <div class="single-card__favorite">
                     {% if user.is_authenticated %}
                         {% include 'recipes/includes/fav_star.html' with class='icon-favorite_big' %}
-                        <div class="single-card__favorite-tooltip tooltip">Добавить в избранное</div>
+                        <div class="single-card__favorite-tooltip tooltip">{{ recipe.in_favored|yesno:'Убрать из избранного, Добавить в избранное'}}</div>
                     {% endif %}
                 </div>
             </div>

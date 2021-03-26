@@ -38,7 +38,7 @@ def get_filtered_queryset(request):
 def _filter_queryset_by_tags(queryset, tags):
     """Отфильтровать queryset по тегам."""
     for tag in tags:
-        if tag in Tag.CHOICES:
+        if tag in (Tag.BREAKFAST, Tag.LUNCH, Tag.DINNER):
             queryset = queryset.filter(tags__name__contains=tag)
     return queryset
 

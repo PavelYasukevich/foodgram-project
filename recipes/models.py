@@ -7,7 +7,7 @@ User = get_user_model()
 
 class RecipeQuerySet(models.QuerySet):
     def annotated(self, user):
-        queryset = self.all()
+        queryset = self
         if user.is_authenticated:
             in_purchases = Purchase.objects.filter(
                 recipe=models.OuterRef('pk'),
