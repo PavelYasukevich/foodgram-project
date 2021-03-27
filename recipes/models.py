@@ -42,7 +42,6 @@ class RecipeQuerySet(models.QuerySet):
                 )
             )
         )
-        
         return queryset
 
 

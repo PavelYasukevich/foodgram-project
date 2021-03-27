@@ -1,8 +1,4 @@
-from django.shortcuts import get_object_or_404
-
-from recipes.models import Recipe, Tag
-
-from . import services
+from recipes.models import Tag
 
 
 def selected_filters(request):

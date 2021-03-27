@@ -1,11 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db import models
-from django.shortcuts import get_object_or_404
 
 from pytils.translit import slugify
 
-from . import services
 from .models import Amount, Ingredient, Recipe
 
 
@@ -31,7 +28,11 @@ class RecipeForm(forms.ModelForm):
         self.request = request
         if ingredients is not None:
             self.ingredients = [
-                (ingredient.name, ingredient.amount, ingredient.measurement_unit)
+                (
+                    ingredient.name,
+                    ingredient.amount,
+                    ingredient.measurement_unit
+                )
                 for ingredient
                 in ingredients
             ]
@@ -52,12 +53,12 @@ class RecipeForm(forms.ModelForm):
                 ingredient=ingredient
             )
             self.instance.ingredients.add(ingredient)
-        
+
         self.save_m2m()
         return self.instance
 
     def clean(self):
-        cleaned_data = super().clean()
+        super().clean()
         ingredients = dict()
         for html_name, ingredient_name in self.data.items():
             if html_name.startswith('nameIngredient_'):
@@ -81,9 +82,8 @@ class RecipeForm(forms.ModelForm):
 
         if valid_ingredients.count() != len(ingredients):
             raise ValidationError('Пожалуйста, выбирайте только из списка '
-                'существующих ингредиентов.')
+                                  'существующих ингредиентов.')
 
         if not ingredients:
             raise ValidationError('Не указано ни одного ингредиента '
-                'из существующего перечня')
-
+                                  'из существующего перечня')

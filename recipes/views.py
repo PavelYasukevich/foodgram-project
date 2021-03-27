@@ -4,8 +4,8 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     UserPassesTestMixin
 )
-from django.db.models import Exists, OuterRef, Prefetch, Subquery
-from django.http import Http404, HttpResponseRedirect
+from django.db.models import Exists, OuterRef
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -20,7 +20,7 @@ from django_pdfkit import PDFView
 from . import services
 from .context_processors import tags_for_paginator_link
 from .forms import RecipeForm
-from .models import Amount, Ingredient, Recipe, Subscription
+from .models import Recipe, Subscription
 
 User = get_user_model()
 
@@ -101,7 +101,7 @@ class ProfileView(PaginatorRedirectMixin, ListView):
                 id=self.kwargs.get('id')
             )
         return context
-    
+
     def get_queryset(self):
         author = get_object_or_404(User, id=self.kwargs.get('id'))
         queryset = services.get_filtered_queryset(self.request).filter(
@@ -211,7 +211,6 @@ class DeleteRecipeView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         return self.request.user == self.get_object().author
-
 
 
 def page_not_found(request, exception):

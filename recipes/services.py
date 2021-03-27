@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 
-from .models import Ingredient, Recipe, Tag
+from .models import Recipe, Tag
 
 User = get_user_model()
 
