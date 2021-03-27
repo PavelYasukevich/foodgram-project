@@ -1,7 +1,7 @@
 from django import forms
 from pytils.translit import slugify
 
-from .models import Recipe
+from .models import Amount, Recipe
 
 
 class ImageFieldWidget(forms.ClearableFileInput):
@@ -25,10 +25,19 @@ class RecipeForm(forms.ModelForm):
         super().__init__(**kwargs)
         self.request = request
 
-    def save(self, commit=True):
+    def save(self, valid_ingrs, commit=True):
         self.instance = super().save(commit=False)
         self.instance.author = self.request.user
         self.instance.slug = slugify(self.instance.name)
         self.instance.save()
+
+        Amount.objects.filter(recipe=self.instance).delete()
+
+        for _, ingr, amount_value in valid_ingrs:
+            Amount.objects.create(
+                value=amount_value, recipe=self.instance, ingredient=ingr
+            )
+            self.instance.ingredients.add(ingr)
+        
         self.save_m2m()
         return self.instance

@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import (
     UserPassesTestMixin
 )
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -45,15 +45,8 @@ class RecipePostMixin:
             return self.form_invalid(form)
 
     def form_valid(self, form, valid_ingrs):
-        self.object = form.save()
-        Amount.objects.filter(recipe=self.object).delete()
-
-        for _, ingr, amount_value in valid_ingrs:
-            Amount.objects.create(
-                value=amount_value, recipe=self.object, ingredient=ingr
-            )
-            self.object.ingredients.add(ingr)
-        return redirect(self.get_success_url())
+        self.object = form.save(valid_ingrs)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class PaginatorRedirectMixin:
