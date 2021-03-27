@@ -1,9 +1,12 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import OuterRef, Prefetch, Subquery
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    UserPassesTestMixin
+)
+from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.http import Http404
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -17,7 +20,7 @@ from django_pdfkit import PDFView
 from . import services
 from .context_processors import tags_for_paginator_link
 from .forms import RecipeForm
-from .models import Amount, Ingredient, Recipe
+from .models import Amount, Ingredient, Recipe, Subscription
 
 User = get_user_model()
 
@@ -108,9 +111,25 @@ class ProfileView(PaginatorRedirectMixin, ListView):
     paginate_by = settings.OBJECTS_PER_PAGE
     template_name = 'recipes/authorRecipe.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['author'] = get_object_or_404(
+            User.objects.annotate(
+                in_subscriptions=Exists(
+                    Subscription.objects.filter(
+                        author=OuterRef('pk'),
+                        user=self.request.user
+                    )
+                )
+            ),
+            id=self.kwargs.get('id')
+        )
+        return context
+    
     def get_queryset(self):
+        author = get_object_or_404(User, id=self.kwargs.get('id'))
         queryset = services.get_filtered_queryset(self.request).filter(
-            author__id=self.kwargs.get('id')
+            author=author
         )
         return queryset
 
@@ -138,7 +157,12 @@ class CreateRecipeView(LoginRequiredMixin, RecipePostMixin, CreateView):
         return super().post(request, *args, **kwargs)
 
 
-class UpdateRecipeView(LoginRequiredMixin, RecipePostMixin, UpdateView):
+class UpdateRecipeView(
+    LoginRequiredMixin,
+    UserPassesTestMixin,
+    RecipePostMixin,
+    UpdateView
+    ):
     """Страница редактирования рецепта автором."""
 
     context_object_name = 'recipe'
@@ -149,6 +173,9 @@ class UpdateRecipeView(LoginRequiredMixin, RecipePostMixin, UpdateView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().post(request, *args, **kwargs)
+
+    def test_func(self):
+        return self.request.user == self.get_object().author
 
 
 class FavoritesView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
@@ -207,12 +234,16 @@ class DownloadShoppingList(LoginRequiredMixin, PDFView):
         return kwargs
 
 
-class DeleteRecipeView(LoginRequiredMixin, DeleteView):
+class DeleteRecipeView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Страница подтверждения удаления рецепта автором."""
 
     model = Recipe
     template_name = 'recipes/deleteRecipe.html'
     success_url = reverse_lazy('index')
+
+    def test_func(self):
+        return self.request.user == self.get_object().author
+
 
 
 def page_not_found(request, exception):

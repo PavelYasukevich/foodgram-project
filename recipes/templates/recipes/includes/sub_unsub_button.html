@@ -1,16 +1,14 @@
 {% load custom_filters %}
-{% if user != recipe.author %}
-    {% with flag=recipe.in_subscriptions %}
-        <div class="author-subscribe" data-author="{{ recipe.author.id }}">
-            <{{ tag }} style={{ style }}>
-                <button
-                    class="button button_style{{ flag|yesno:'_light-blue,_blue' }} button_size_subscribe"
-                    name="subscribe"
-                    {% if not flag %}data-out{% endif %}
-                >
-                    {{ flag|yesno:'Отписаться от автора,Подписаться на автора' }}
-                </button>
-            </{{ tag }}>
-        </div>
-    {% endwith %}
+{% if user != author %}
+    <div class="author-subscribe" data-author="{{ author.id }}">
+        <{{ tag }} style={{ style }}>
+            <button
+                class="button button_style{{ flag|yesno:'_light-blue,_blue' }} button_size_subscribe"
+                name="subscribe"
+                {% if not flag %}data-out{% endif %}
+            >
+                {{ flag|yesno:'Отписаться от автора,Подписаться на автора' }}
+            </button>
+        </{{ tag }}>
+    </div>
 {% endif %}
