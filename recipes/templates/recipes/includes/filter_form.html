@@ -2,11 +2,12 @@
 
 <form method="get" id="formID" onchange="document.getElementById('formID').submit()">
     <ul class="tags">
+        <input name="page" value="{{ page_obj.number }}" hidden>
         {% for tag in all_tags %}
             <li class="tags__item">
                 <input 
                     type="checkbox"
-                    name="tags"
+                    name="tags" 
                     value="{{ tag.name }}"
                     class="tags__checkbox tags__checkbox_style_{{ tag.color }}"
                     {% if tag.name in selected_filters %}checked{% endif %}
