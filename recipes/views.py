@@ -25,30 +25,6 @@ from .models import Amount, Ingredient, Recipe, Subscription
 User = get_user_model()
 
 
-class RecipePostMixin:
-    """Содержит общую логику обработки создания и редактирования рецепта."""
-
-    def get_form_kwargs(self):
-        result = super().get_form_kwargs()
-        result['request'] = self.request
-        return result
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        valid_ingrs = services.handle_form_ingredients(
-            data=self.request.POST,
-            form=form,
-        )
-        if form.is_valid():
-            return self.form_valid(form, valid_ingrs)
-        else:
-            return self.form_invalid(form)
-
-    def form_valid(self, form, valid_ingrs):
-        self.object = form.save(valid_ingrs)
-        return HttpResponseRedirect(self.get_success_url())
-
-
 class PaginatorRedirectMixin:
     """
     Редирект на последнюю существущую страницу.
@@ -93,7 +69,8 @@ class RecipeDetailView(DetailView):
     template_name = 'recipes/singlePage.html'
 
     def get_queryset(self):
-        return services.get_filtered_queryset(self.request)
+        queryset = services.get_filtered_queryset(self.request)
+        return queryset
 
 
 class ProfileView(PaginatorRedirectMixin, ListView):
@@ -106,17 +83,23 @@ class ProfileView(PaginatorRedirectMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['author'] = get_object_or_404(
-            User.objects.annotate(
-                in_subscriptions=Exists(
-                    Subscription.objects.filter(
-                        author=OuterRef('pk'),
-                        user=self.request.user
+        if self.request.user.is_authenticated:
+            context['author'] = get_object_or_404(
+                User.objects.annotate(
+                    in_subscriptions=Exists(
+                        Subscription.objects.filter(
+                            author=OuterRef('pk'),
+                            user=self.request.user
+                        )
                     )
-                )
-            ),
-            id=self.kwargs.get('id')
-        )
+                ),
+                id=self.kwargs.get('id')
+            )
+        else:
+            context['author'] = get_object_or_404(
+                User,
+                id=self.kwargs.get('id')
+            )
         return context
     
     def get_queryset(self):
@@ -138,6 +121,18 @@ class SubscriptionsView(LoginRequiredMixin, PaginatorRedirectMixin, ListView):
         return self.request.user.subscriptions.select_related('author')
 
 
+class RecipePostMixin:
+    """Содержит общую логику обработки создания и редактирования рецепта."""
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        if self.object:
+            kwargs['ingredients'] = self.object.ingredients.all()
+
+        return kwargs
+
+
 class CreateRecipeView(LoginRequiredMixin, RecipePostMixin, CreateView):
     """Страница создания нового рецепта."""
 
@@ -145,27 +140,21 @@ class CreateRecipeView(LoginRequiredMixin, RecipePostMixin, CreateView):
     form_class = RecipeForm
     template_name = 'recipes/formRecipe.html'
 
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        return super().post(request, *args, **kwargs)
-
 
 class UpdateRecipeView(
     LoginRequiredMixin,
     UserPassesTestMixin,
     RecipePostMixin,
     UpdateView
-    ):
+):
     """Страница редактирования рецепта автором."""
 
     context_object_name = 'recipe'
     form_class = RecipeForm
     template_name = 'recipes/formRecipe.html'
-    queryset = Recipe.objects.all()
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super().post(request, *args, **kwargs)
+    def get_queryset(self):
+        return services.get_filtered_queryset(self.request)
 
     def test_func(self):
         return self.request.user == self.get_object().author
@@ -193,22 +182,8 @@ class PurchasesView(LoginRequiredMixin, ListView):
     template_name = 'recipes/purchaseList.html'
 
     def get_queryset(self):
-        purchases = self.request.user.purchases.select_related(
-            'recipe'
-        ).prefetch_related(
-            Prefetch(
-                'recipe__ingredients',
-                queryset=(
-                    Ingredient.objects.distinct().annotate(
-                        amount=Subquery(
-                            Amount.objects.filter(
-                                ingredient=OuterRef('pk'),
-                                recipe=OuterRef('recipe__id'),
-                            ).values('value')[:1],
-                        )
-                    )
-                )
-            )
+        purchases = services.get_filtered_queryset(self.request).filter(
+            in_purchased=True
         )
         return purchases
 

@@ -1,7 +1,12 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.shortcuts import get_object_or_404
+
 from pytils.translit import slugify
 
-from .models import Amount, Recipe
+from . import services
+from .models import Amount, Ingredient, Recipe
 
 
 class ImageFieldWidget(forms.ClearableFileInput):
@@ -21,11 +26,17 @@ class RecipeForm(forms.ModelForm):
             'tags': SpecialCheckboxSelectMultiple(),
         }
 
-    def __init__(self, request, **kwargs):
+    def __init__(self, request, ingredients=None, **kwargs):
         super().__init__(**kwargs)
         self.request = request
+        if ingredients is not None:
+            self.ingredients = [
+                (ingredient.name, ingredient.amount, ingredient.measurement_unit)
+                for ingredient
+                in ingredients
+            ]
 
-    def save(self, valid_ingrs, commit=True):
+    def save(self, commit=True):
         self.instance = super().save(commit=False)
         self.instance.author = self.request.user
         self.instance.slug = slugify(self.instance.name)
@@ -33,11 +44,46 @@ class RecipeForm(forms.ModelForm):
 
         Amount.objects.filter(recipe=self.instance).delete()
 
-        for _, ingr, amount_value in valid_ingrs:
+        for name, amount, _ in self.ingredients:
+            ingredient = Ingredient.objects.get(name=name)
             Amount.objects.create(
-                value=amount_value, recipe=self.instance, ingredient=ingr
+                value=amount,
+                recipe=self.instance,
+                ingredient=ingredient
             )
-            self.instance.ingredients.add(ingr)
+            self.instance.ingredients.add(ingredient)
         
         self.save_m2m()
         return self.instance
+
+    def clean(self):
+        cleaned_data = super().clean()
+        ingredients = dict()
+        for html_name, ingredient_name in self.data.items():
+            if html_name.startswith('nameIngredient_'):
+                number_at_the_end = int(html_name.split('_')[1])
+                ingredients[ingredient_name] = ingredients.get(
+                    ingredient_name, 0) + int(
+                    self.data.get(f'valueIngredient_{number_at_the_end}')
+                )
+        valid_ingredients = Ingredient.objects.filter(name__in=ingredients)
+        form_ingredients = [
+            (
+                ingredient.name,
+                ingredients[ingredient.name],
+                ingredient.measurement_unit
+            )
+            for ingredient
+            in valid_ingredients
+        ]
+
+        self.ingredients = form_ingredients
+
+        if valid_ingredients.count() != len(ingredients):
+            raise ValidationError('Пожалуйста, выбирайте только из списка '
+                'существующих ингредиентов.')
+
+        if not ingredients:
+            raise ValidationError('Не указано ни одного ингредиента '
+                'из существующего перечня')
+

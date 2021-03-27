@@ -26,6 +26,23 @@ class RecipeQuerySet(models.QuerySet):
                 in_purchased=models.Exists(in_purchases),
                 in_subscriptions=models.Exists(in_subs)
             )
+
+        queryset = queryset.prefetch_related(
+            models.Prefetch(
+                'ingredients',
+                queryset=(
+                    Ingredient.objects.distinct().annotate(
+                        amount=models.Subquery(
+                            Amount.objects.filter(
+                                ingredient=models.OuterRef('pk'),
+                                recipe=models.OuterRef('recipe__id'),
+                            ).values('value')[:1],
+                        )
+                    )
+                )
+            )
+        )
+        
         return queryset
 
 
