@@ -76,6 +76,7 @@ class RecipeForm(forms.ModelForm):
             )
             for ingredient
             in valid_ingredients
+            if ingredients[ingredient.name] > 0
         ]
 
         self.ingredients = form_ingredients
@@ -84,6 +85,12 @@ class RecipeForm(forms.ModelForm):
             raise ValidationError('Пожалуйста, выбирайте только из списка '
                                   'существующих ингредиентов.')
 
+        for amount in ingredients.values():
+            if not isinstance(amount, int) or amount < 0:
+                raise ValidationError('Количество ингредиента должно быть '
+                                      'целым положительным числом')
+
         if not ingredients:
             raise ValidationError('Не указано ни одного ингредиента '
                                   'из существующего перечня')
+
