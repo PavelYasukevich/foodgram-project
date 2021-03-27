@@ -93,4 +93,3 @@ class RecipeForm(forms.ModelForm):
         if not ingredients:
             raise ValidationError('Не указано ни одного ингредиента '
                                   'из существующего перечня')
-
