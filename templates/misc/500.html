@@ -14,6 +14,8 @@
         <p class="custom-text-block">Ошибка на сервере, попробуйте обновить страницу или обратиться позже</p>
     </div>
     <div class="custom-button-block">
-        <button class="button button_style_blue"><a href="{% url 'index' %}">Вернуться на главную</a></button>
+        <a href="{% url 'index' %}"></a>
+            {% include 'users/includes/form_button.html' with button_title='Вернуться на главную' %}
+        </a>
     </div>
 {% endblock %}

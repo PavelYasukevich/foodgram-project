@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import handler404, handler500
+from django.conf.urls import handler403, handler404, handler500
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.flatpages import views as flatpages_views
@@ -28,6 +28,7 @@ urlpatterns += [
     ),
 ]
 
+handler403 = "recipes.views.page_forbidden"  # noqa
 handler404 = "recipes.views.page_not_found"  # noqa
 handler500 = "recipes.views.server_error"  # noqa
 

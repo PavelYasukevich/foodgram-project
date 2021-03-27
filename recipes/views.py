@@ -218,6 +218,11 @@ def page_not_found(request, exception):
     return render(request, 'misc/404.html', {'path': request.path}, status=404)
 
 
+def page_forbidden(request, exception):
+    """Вернуть страницу ошибки 403."""
+    return render(request, 'misc/403.html', {'path': request.path}, status=403)
+
+
 def server_error(request):
     """Вернуть страницу ошибки 500."""
     return render(request, 'misc/500.html', status=500)
