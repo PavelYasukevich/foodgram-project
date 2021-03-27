@@ -11,9 +11,9 @@
         <form method="post" action="{% url 'delete_recipe' recipe.id %}">
             {% csrf_token %}
             <h3>Уверены, что хотите удалить "{{ object.name }}"?</h3>
-            {% include 'recipes/includes/form_button.html' with title='Уверен!' type='submit' %}
+            {% include 'recipes/buttons/form_button.html' with title='Уверен!' type='submit' %}
             <a href="{% url 'index' %}">
-                {% include 'recipes/includes/form_button.html' with title='Нет, вернуться на главную' type='button' %}
+                {% include 'recipes/buttons/form_button.html' with title='Нет, вернуться на главную' type='button' %}
             </a>
         </form>
     </div>

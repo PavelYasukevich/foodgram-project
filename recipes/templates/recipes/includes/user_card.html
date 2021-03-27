@@ -13,7 +13,7 @@
                     <div class="recipe">
                         {% include 'recipes/includes/recipe_image.html' with link=True class='recipe__image' %}
                         <h3 class="recipe__title">{{ recipe.name|capfirst }}</h3>
-                        {% include 'recipes/includes/recipe_cooking_time.html' with class='recipe__text' time=recipe.cooking_time %}
+                        {% include 'recipes/icons/recipe_cooking_time.html' with class='recipe__text' time=recipe.cooking_time %}
                     </div>
                 </li>
             {% endfor %}
@@ -29,6 +29,6 @@
         </ul>
     </div>
     <div class="card-user__footer">
-        {% include 'recipes/includes/usercard_unsub_button.html' %}
+        {% include 'recipes/buttons/usercard_unsub_button.html' %}
     </div>
 </div>

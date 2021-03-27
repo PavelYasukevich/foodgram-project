@@ -7,14 +7,14 @@
         <a class="card__title link" href="{% url 'recipe' recipe.id %}">{{ recipe.name|capfirst }}</a>
         {% include 'recipes/includes/recipe_tags.html' with ul_class='card__items' li_class='card__item' recipe=recipe%}
         <div class="card__items card__items_column">
-            {% include 'recipes/includes/recipe_cooking_time.html' with class='card__text' time=recipe.cooking_time %}
-            {% include 'recipes/includes/user_icon.html' with class='card__text' author=recipe.author %}
+            {% include 'recipes/icons/recipe_cooking_time.html' with class='card__text' time=recipe.cooking_time %}
+            {% include 'recipes/icons/user_icon.html' with class='card__text' author=recipe.author %}
         </div>
     </div>
     <div class="card__footer">
         {% if user.is_authenticated %}
-            {% include 'recipes/includes/purchase.html' with recipe=recipe user=user %}
-            {% include 'recipes/includes/fav_star.html' %}
+            {% include 'recipes/buttons/purchase_button.html' with recipe=recipe user=user %}
+            {% include 'recipes/icons/fav_star.html' %}
         {% endif %}
     </div>
 </div>

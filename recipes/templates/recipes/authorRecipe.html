@@ -15,7 +15,7 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-        {% include 'recipes/includes/sub_unsub_button.html' with author=author user=user tag='p' style='padding: 0 0 2em 0;' flag=author.in_subscriptions %}
+        {% include 'recipes/buttons/sub_unsub_button.html' with author=author user=user tag='p' style='padding: 0 0 2em 0;' flag=author.in_subscriptions %}
     {% endif %}
 
     <div class="card-list">

@@ -15,17 +15,17 @@
                 <h1 class="single-card__title">{{ recipe.name }}</h1>
                 <div class="single-card__favorite">
                     {% if user.is_authenticated %}
-                        {% include 'recipes/includes/fav_star.html' with class='icon-favorite_big' %}
+                        {% include 'recipes/icons/fav_star.html' with class='icon-favorite_big' %}
                         <div class="single-card__favorite-tooltip tooltip">{{ recipe.in_favored|yesno:'Убрать из избранного, Добавить в избранное'}}</div>
                     {% endif %}
                 </div>
             </div>
             {% include 'recipes/includes/recipe_tags.html' with ul_class='single-card__items' li_class='single-card__item' recipe=recipe%}
             <div class="single-card__items single-card__items_column">
-                {% include 'recipes/includes/recipe_cooking_time.html' with class='single-card__text' time=recipe.cooking_time %}
+                {% include 'recipes/icons/recipe_cooking_time.html' with class='single-card__text' time=recipe.cooking_time %}
                 <ul class="single-card__items">
                     <li class="single-card__item">
-                        {% include 'recipes/includes/user_icon.html' with class='single-card__text' author=recipe.author %}
+                        {% include 'recipes/icons/user_icon.html' with class='single-card__text' author=recipe.author %}
                     </li>
                     {% if request.user == recipe.author %}
                         <li class="single-card__item">
@@ -39,9 +39,9 @@
             <ul class="single-card__items">
                 {% if user.is_authenticated %}
                     <li class="single-card__item">
-                        {% include 'recipes/includes/purchase.html' with recipe=recipe user=user %}
+                        {% include 'recipes/buttons/purchase_button.html' with recipe=recipe user=user %}
                     </li>
-                    {% include 'recipes/includes/sub_unsub_button.html' with author=recipe.author user=user tag='li' flag=recipe.in_subscriptions %}
+                    {% include 'recipes/buttons/sub_unsub_button.html' with author=recipe.author user=user tag='li' flag=recipe.in_subscriptions %}
                 {% endif %}
             </ul>
             <div class="single-card__section">

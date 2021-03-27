@@ -1,6 +1,6 @@
 {% load static %}
 
-{% include 'recipes/includes/form_button.html' with title=recipe|yesno:"Сохранить,Создать" type='submit' %}
+{% include 'recipes/buttons/form_button.html' with title=recipe|yesno:"Сохранить,Создать" type='submit' %}
 {% if recipe %}
     <a style="margin-left: 2.5em" href="{% url 'delete_recipe' recipe.id %}" class="form__ingredient-link">Удалить</a>
 {% endif %}

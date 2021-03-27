@@ -26,7 +26,7 @@
                     <div class="recipe recipe_reverse">
                         {% include 'recipes/includes/recipe_image.html' with link=True class='recipe__image recipe__image_big' %}
                         <h3 class="recipe__title">{{ recipe.name|capfirst }}</h3>
-                        {% include 'recipes/includes/recipe_cooking_time.html' with class='recipe_text' time=recipe.cooking_time %}
+                        {% include 'recipes/icons/recipe_cooking_time.html' with class='recipe_text' time=recipe.cooking_time %}
                         <div>
                             {% for ingredient in recipe.ingredients.all %}
                                 <div class="form__field-item-ingredient" id="ing_{{ idx }}">
