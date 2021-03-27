@@ -11,7 +11,7 @@ const configButton = {
         },
         active: {
             class: 'button_style_light-blue-outline',
-            text: `<span class="icon-check button__icon"></span> Рецепт добавлен`
+            text: `<span class="icon-check button__icon"></span>Рецепт добавлен`
         }
     },
     favorites: {
