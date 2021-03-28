@@ -46,7 +46,8 @@ class PaginatorRedirectMixin:
                 allow_empty_first_page=self.get_allow_empty(),
             )
             tags = tags_for_paginator_link(request)['tags_for_paginator_link']
-            url = reverse('index')
+            url = reverse(request.resolver_match.url_name)
+            print(url)
             return redirect(f'{url}?page={paginator.num_pages}{tags}')
 
 
