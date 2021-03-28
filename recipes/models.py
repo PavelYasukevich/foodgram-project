@@ -7,7 +7,22 @@ User = get_user_model()
 
 class RecipeQuerySet(models.QuerySet):
     def annotated(self, user):
-        queryset = self
+        queryset = self.prefetch_related(
+            models.Prefetch(
+                'ingredients',
+                queryset=(
+                    Ingredient.objects.distinct().annotate(
+                        amount=models.Subquery(
+                            Amount.objects.filter(
+                                ingredient=models.OuterRef('pk'),
+                                recipe=models.OuterRef('recipe__id'),
+                            ).values('value')[:1],
+                        )
+                    )
+                )
+            )
+        )
+
         if user.is_authenticated:
             in_purchases = Purchase.objects.filter(
                 recipe=models.OuterRef('pk'),
@@ -27,21 +42,6 @@ class RecipeQuerySet(models.QuerySet):
                 in_subscriptions=models.Exists(in_subs)
             )
 
-        queryset = queryset.prefetch_related(
-            models.Prefetch(
-                'ingredients',
-                queryset=(
-                    Ingredient.objects.distinct().annotate(
-                        amount=models.Subquery(
-                            Amount.objects.filter(
-                                ingredient=models.OuterRef('pk'),
-                                recipe=models.OuterRef('recipe__id'),
-                            ).values('value')[:1],
-                        )
-                    )
-                )
-            )
-        )
         return queryset
 
 
