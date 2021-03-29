@@ -1,6 +1,9 @@
 name: Foodgram workflow
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   tests:
@@ -26,7 +29,6 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     needs: tests
-    if: github.ref == 'refs/heads/master'
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -46,7 +48,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
-    if: github.ref == 'refs/heads/master'
     steps:
 
     - name: exporting env values
@@ -77,6 +78,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
+          sudo docker image prune -f
           sudo docker pull ${{ secrets.USER }}/foodgram
           id=$(docker create ${{ secrets.USER }}/foodgram)
           sudo docker cp $id:/foodgram/docker-compose.yaml ~/foodgram/docker-compose.yaml
