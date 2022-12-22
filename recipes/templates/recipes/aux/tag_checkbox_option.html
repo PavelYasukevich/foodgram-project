@@ -12,7 +12,7 @@
             {% endif %}
         {% endif %}
     {% endfor %}
-    class="tags__checkbox tags__checkbox_style_{% if widget.label == 'Завтрак' %}orange{% elif widget.label == 'Обед' %}green{% else %}purple{% endif %}"
+    class="tags__checkbox tags__checkbox_style_{% if widget.label == 'Завтрак' %}green{% elif widget.label == 'Обед' %}orange{% else %}purple{% endif %}"
     >
 
 <label{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %} class="tags__label">{{ widget.label }}</label>

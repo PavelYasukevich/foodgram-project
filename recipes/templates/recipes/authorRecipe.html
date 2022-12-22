@@ -22,6 +22,10 @@
         {% for recipe in author_recipes %}
             {% include "recipes/includes/recipe_card.html" with recipe=recipe %}
         {% endfor %}
+
+        {% if not author_recipes %}
+            <h3 class="single-card__section-text">Пока что у вас нет своих рецептов.</h3>
+        {% endif %}
     </div>
 {% endblock %}
 

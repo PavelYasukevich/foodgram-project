@@ -2,7 +2,6 @@ from django.urls import path
 
 from . import views
 
-
 urlpatterns = [
     path('<int:id>/profile/', views.ProfileView.as_view(), name='profile'),
     path('recipe/new/', views.CreateRecipeView.as_view(), name='new_recipe'),
