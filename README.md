@@ -1,6 +1,6 @@
 [![Foodgram workflow](https://github.com/PavelYasukevich/foodgram-project/actions/workflows/foodgram_workflow.yaml/badge.svg)](https://github.com/PavelYasukevich/foodgram-project/actions/workflows/foodgram_workflow.yaml)
 
-# DISCLAIMER!!
+# Disclaimer
 
 Это **учебный** проект, сделанный в рамках курса Python backend developer. Весь **frontend** для проекта был предоставлен в рамках курса, и не является написанным мною.
 
@@ -17,6 +17,8 @@ Foodgram - это продуктовый помощник, сервис для �
 * [Docker](https://docs.docker.com/) - Контейнеризация, версия 20.10.3
 * [Docker-compose](https://docs.docker.com/compose/) версия 1.28.3
 
+## Локальный запуск
+Для локальной установки проекта выберите ветку local_deploy!
 
 ## Авторы
 
